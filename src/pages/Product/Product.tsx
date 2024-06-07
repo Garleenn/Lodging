@@ -7,12 +7,13 @@ axios.defaults.baseURL = 'http://localhost:3005';
 import './Product.scss'
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
 import { useProduct } from '../../hooks/useProducts';
+import { useAddToCart } from '../../hooks/useCart';
 
 export function Product() {
 
 	const { id } = useParams<string>();
 
-	const { isLoading, error, data } = useProduct(id);
+	const { isLoading, error, data, refetch } = useProduct(id);
 
 	const [index, setIndex] = useState<number>(0);
 
@@ -31,6 +32,13 @@ export function Product() {
 			setIndex(prev => {return prev + 1});
 		}
 	}, [index]);
+
+	const {mutate} = useAddToCart(id);
+
+	const addToCart = () => {
+		mutate(id);
+		refetch();
+	}
 
 
 	return (
@@ -60,14 +68,16 @@ export function Product() {
 								</div>
 							)}
 							<i>Выставленно {data.createdAt}</i>
-							<GrFavorite size={32} className='w-fit favourite' />
+							<div className="favourite" onClick={addToCart}>
+								<GrFavorite size={32} className='w-fit' />
+							</div>
 						</div>
 						<div className="info-block flex flex-col gap-2">
 							<h2 className="text-3xl font-bold">{data.title}</h2>
 							<p className="text-slate-500">{data.description}</p>
 							<i>Тип: {data.isHotel ? 'Отель'  : 'Частный'}</i>
 							<span>Город: <u>{data.city}</u></span>
-							<Link to={'user/' + data.author}>Создатель: {data.author}</Link>
+							<Link to={'/user/' + data.authorId}>Создатель: {data.author}</Link>
 							<i>Рейтинг: {data.raiting} звёзд</i>
 							<i className='places-count'>Осталось: {data.places} мест</i>
 							<span className='text-xl'>Цена: <b>{data.price} руб.</b></span>

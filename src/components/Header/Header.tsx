@@ -23,13 +23,13 @@ export function Header() {
 				</form>
 				<nav>
 					<ul className='flex gap-8'>
-						<li><Link className='header-link' to='booking'>
+						<li><Link className='header-link' to='/booking'>
 							<FaShop size={40}/>
 						</Link></li>
-						<li><Link className='header-link' to='favourites'>
+						<li><Link className='header-link' to='/favorites'>
 							<GrFavorite size={40}/>
 						</Link></li>
-						<li><Link className='header-link' to='user/4'>
+						<li><Link className='header-link' to='/user/6660d2f2619400dd40b65218'>
 							<CgProfile size={40}/>
 						</Link></li>
 					</ul>

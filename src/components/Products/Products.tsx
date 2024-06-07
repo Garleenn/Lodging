@@ -5,6 +5,7 @@ import { CenterPage } from '../CenterPage/CenterPage';
 import { IProduct } from '../../types/product.interface';
 import { useEffect, useState } from 'react';
 import { useProducts } from '../../hooks/useProducts';
+import { useAddToCart } from '../../hooks/useCart';
 
 export function Products() {
 
@@ -24,6 +25,17 @@ export function Products() {
 	useEffect(() => {
 		refetch();
 	}, [isRefetch])
+
+	const [idProduct, setIdProduct] = useState<string>(``);
+
+	const {mutate} = useAddToCart(idProduct);
+
+	const addToCart = (id: string) => {
+		setIdProduct(id);
+
+		mutate(id);
+		refetch();
+	}
 
 	return (
 	<>
@@ -47,7 +59,7 @@ export function Products() {
 					<i>Рейтинг: {product.raiting} звёзд</i>
 					<span className='text-xl'>Цена: <b>{product.price} руб.</b></span>
 					<Link role='button' className='w-100 btn mt-2 text-center' to={'product/' + product._id}>Подробнее</Link>
-					<GrFavorite size={32} className='w-fit favourite' />
+					<GrFavorite onClick={() => addToCart(product._id)} size={32} className='w-fit favourite' />
 				</div>
 			</div>
 			))}

@@ -82,6 +82,10 @@ const productSchema = new mongoose.Schema({
     places: {
         type: Number,
         required: true,
+    },
+    authorId: {
+        type: String,
+        required: true,
     }
 }, {
     timestamps: true,
@@ -138,14 +142,18 @@ app.get('/products', async (req, res) => {
 
     let data = await Product.find(search).sort(sorting);
     res.send(data).status(200);
-    console.info(data);
 });
 
 app.get('/myProducts', async (req, res) => {
-    const author = req.query.author;
-    let data = await Product.find({author: author});
+    const id = req.query.id;
+    let {login} = await User.findOne({_id: id})
+    let data = await Product.find({author: login});
     if(data) {
-        res.send(data).status(200);
+        try {
+            res.send(data).status(200);
+        } catch (error) {
+            res.send(error).status(400);
+        }
     } else {
         res.send('Товаров не найдено').status(200);
     }
@@ -153,6 +161,7 @@ app.get('/myProducts', async (req, res) => {
 
 app.post('/products', async (req, res) => {
     const { title, description, price, category, image, isGood, countHas, brand } = req.body;
+    // add authorId
 
     const product = new Product({
         title: title,
@@ -253,6 +262,11 @@ const userSchema = new mongoose.Schema({
         }
     }],
     cart: [{
+        idProduct: {
+            type: String,
+            required: true,
+            unique: true
+        },
         title: {
             type: String,
             required: true,
@@ -264,12 +278,38 @@ const userSchema = new mongoose.Schema({
             min: 1,
             max: 20000000
         },
-        category: String,
-        image: String,
-        isGood: Boolean,
-        idProduct: String,
-        brand: String,
-        countHas: Number,
+        author: {
+            type: String,
+            required: true,
+        },
+        isHotel: {
+            type: String,
+            required: true,
+        },
+        city: {
+            type: String,
+            required: true,
+        },
+        raiting: {
+            type: String,
+            required: true,
+        },
+        images: [{
+            type: String,
+            required: true,
+        }],
+        phoneNumber: {
+            type: String,
+            required: true,
+        },
+        places: {
+            type: String,
+            required: true,
+        },
+        authorId: {
+            type: String,
+            required: true,
+        },
     }],
 }, {
     timestamps: true
@@ -293,10 +333,15 @@ app.get('/login', async (req, res) => {
 });
 
 app.get('/user', async (req, res) => {
-    const login = req.query.login;
-    const data = await User.findOne({login: login});
-    if(data) {
-        res.send(data).status(200);
+    const id = req.query.id;
+    const data = await User.findOne({_id: id});
+    if(data && id) {
+        data.password = ``;
+        try {
+            res.send(data).status(200);
+        } catch (err) {
+            res.send(err).status(400);
+        }
     } else {
         res.sendStatus(400);
     }
@@ -440,52 +485,49 @@ app.put('/delete-review', async (req, res) => {
 // Корзина товаров
 
 app.get('/cart', async (req, res) => {
-    if(req.session.username) {
-        const user = await User.find({login: req.session.username});
-        res.send(user).status(200);
-        console.log(user);
-    } else {
-        res.sendStatus(404);
-    }
+    // if(req.session.username) {
+        const user = await User.findOne({login: 'test'});
+        res.send(user.cart).status(200);
+    // } else {
+        // res.sendStatus(404);
+    // }
 });
 
 app.put('/cart-post', async (req, res) => {
-    const { id, title, description, price, category, image, isGood, brand, countHas } = req.body;
+    const { id } = req.body;
 
     const user = await User.findOne({login: req.session.username});
 
-    let indexReview = user.cart.findIndex((e) => e.idProduct == id);
-    let item = user.cart[indexReview];
+    const product = await Product.findOne({_id: id})
 
-    if(item) {
-        res.sendStatus(400);
-    } else {
+    try {
         user.cart.push({
             idProduct: id,
-            title: title,
-            description: description,
-            price: price,
-            category: category,
-            image: image,
-            isGood: isGood,
-            brand: brand,
-            countHas: countHas,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            author: product.author,
+            isHotel: product.isHotel,
+            city: product.city,
+            raiting: product.raiting,
+            images: product.images,
+            phoneNumber: product.phoneNumber,
+            places: product.places,
+            authorId: product.authorId,
         });
-        try {
-            await user.save();
-            res.sendStatus(201);
-        } catch {
-            res.sendStatus(400);
-        }
+        await user.save();
+        res.sendStatus(201);
+    } catch {
+        res.sendStatus(400); 
     }
 });
 
 app.put('/cart-delete', async (req, res) => {
-    const { login, id } = req.body;
+    const { id } = req.body;
     
-    const user = await User.findOne({login: login});
+    const user = await User.findOne({login: req.session.username});
     
-    const indexCart = user.cart.findIndex((e) => e._id == id);
+    const indexCart = user.cart.findIndex((e) => e.idProduct == id);
 
     user.cart.splice(indexCart, 1)
     
@@ -501,6 +543,6 @@ app.get('/in-session', async (req, res) => {
     if(req.session.username) {
         res.send(true).status(200);
     } else {
-        res.send(false).status(404);
+        res.send(false).status(400);
     }
 });

@@ -3,6 +3,7 @@ export interface IProduct {
 	title: string,
 	description: string,
 	author: string,
+	authorId: string,
 	isHotel: boolean,
 	city:  string,
 	price: number,

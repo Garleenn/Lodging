@@ -1,11 +1,12 @@
 export interface IUser {
 	login: string,
 	email: string,
-	password: string,
+	about: string,
 	avaImage: string,
 	role: string,
 	reviews: IReviews[],
 	cart: ICart[],
+	createdAt: string,
 }
 
 interface IReviews {
@@ -14,7 +15,8 @@ interface IReviews {
 	raiting: number,
 }
 
-interface ICart {
+export interface ICart {
+	idProduct: string,
 	title: string,
 	description: string,
 	author: string,

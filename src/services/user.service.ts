@@ -1,11 +1,12 @@
 import axios from "axios";
 import { IUser } from "../types/user.interface";
+import { IProduct } from "../types/product.interface";
 axios.defaults.baseURL = 'http://localhost:3005'
 
 class getUser {
 
 	async getUserInfo(id: string) {
-		return axios.get<IUser[]>('/user', {
+		return axios.get<IUser>('/user', {
 			params: {
 				id: id,
 			}
@@ -13,7 +14,7 @@ class getUser {
 	}
 
 	async getUserProducts(id: string) {
-		return axios.get<IUser>('/myProduct', {
+		return axios.get<IProduct[]>('/myProducts', {
 			params: {
 				id: id
 			}

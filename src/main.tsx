@@ -11,6 +11,7 @@ import {
 import { Profile } from './pages/Profile/Profile.tsx';
 import { NotFound } from './components/NotFound/NotFound.tsx';
 import { Product } from './pages/Product/Product.tsx';
+import { Cart } from './pages/Cart/Cart';
 
 import {
   QueryClient,
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "product/:id",
     element: <Product />,
+  },
+  {
+    path: "favorites",
+    element: <Cart />,
   },
 ]);
 
