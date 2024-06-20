@@ -1,4 +1,5 @@
 export interface IUser {
+	_id: string,
 	login: string,
 	email: string,
 	about: string,
@@ -27,4 +28,9 @@ export interface ICart {
 	images: string[],
 	phoneNumber: string,
 	places: number,
+}
+
+export interface IRegister extends IUser {
+	password: string,
+	exPassword: string,
 }

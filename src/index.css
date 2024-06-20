@@ -65,3 +65,10 @@ input, textarea, select, Select {
   background-color: #fff;
   outline: none;
 }
+
+label {
+  font-weight: 700;
+  font-size: 22px;
+  margin-top: 13px;
+  margin-bottom: 4px;
+}

@@ -6,10 +6,13 @@ import { MdOutlineMenu } from 'react-icons/md'
 import { useState } from 'react'
 import { Menu } from './BurgerMenu'
 import { Link } from 'react-router-dom'
+import { useSession } from '../../hooks/useUser'
 
 export function Header() {
 
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+
+	const { data, isError } = useSession();
 	
 
 	return (
@@ -22,6 +25,7 @@ export function Header() {
 					<input type="search" placeholder='Найти ночлег'/>
 				</form>
 				<nav>
+						{data && !isError ? (
 					<ul className='flex gap-8'>
 						<li><Link className='header-link' to='/booking'>
 							<FaShop size={40}/>
@@ -29,10 +33,11 @@ export function Header() {
 						<li><Link className='header-link' to='/favorites'>
 							<GrFavorite size={40}/>
 						</Link></li>
-						<li><Link className='header-link' to='/user/6660d2f2619400dd40b65218'>
+						<li><Link className='header-link' to={`/user/${data._id}`}>
 							<CgProfile size={40}/>
 						</Link></li>
 					</ul>
+						) : (<Link to='/login'><button>Войти!</button></Link>)}
 				</nav>
 				<MdOutlineMenu onClick={() => setIsOpen(true)} className='burger-btn hidden' size={40}/>
 				{isOpen && (<Menu setIsOpen={setIsOpen} />)}

@@ -2,8 +2,6 @@ import { GrFavorite } from 'react-icons/gr'
 import { Link, useParams } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { useCallback, useState } from "react";
-import axios from "axios";
-axios.defaults.baseURL = 'http://localhost:3005';
 import './Product.scss'
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
 import { useProduct } from '../../hooks/useProducts';
@@ -36,7 +34,7 @@ export function Product() {
 	const {mutate} = useAddToCart(id);
 
 	const addToCart = () => {
-		mutate(id);
+		mutate();
 		refetch();
 	}
 

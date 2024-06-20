@@ -4,7 +4,7 @@ import { useCart, useRemoveFromCart } from "../../hooks/useCart";
 import { Link } from 'react-router-dom';
 import './Cart.scss'
 import { ICart } from "../../types/user.interface";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function Cart() {
 
@@ -12,19 +12,15 @@ export function Cart() {
 
 	const [idRemoved, setIdRemoved] = useState<string>(``);
 
-	const { mutate } = useRemoveFromCart(idRemoved);
+	const { mutate, isPending } = useRemoveFromCart(idRemoved);
 	
 	const removeProduct = (id: string) => {
 		setIdRemoved(id);
-
+		if(!isPending) {
+			refetch();
+		}
 		mutate();
 	}
-
-	useEffect(() => {
-		setTimeout(() => {
-			refetch();
-		}, 10)
-	}, [idRemoved]);
 
 
 	return (

@@ -1,17 +1,23 @@
 import { useParams } from "react-router-dom"
-import { useUserInfo } from '../../hooks/useUser';
+import { useCheck, useUserInfo } from '../../hooks/useUser';
 import './UserProfile.scss'
 import { MdOutlineMenu } from "react-icons/md";
 import dayjs from 'dayjs'
+import { IUser } from "../../types/user.interface";
+
 
 export function UserProfile() {
 
 	const { id } = useParams<string>();
 
-	const { isLoading, error, data } = useUserInfo(id);
+	const { error, data } = useUserInfo<IUser>(id);
 
+	const { data: isCreator, isLoading	} = useCheck(id);
+
+	console.log(isCreator);
+	
 	const createDate = (data: string):string => {
-		 return dayjs(data).format('DD.MM.YYYY');
+		return dayjs(data).format('DD.MM.YYYY');
 	}
 
 
@@ -28,9 +34,13 @@ export function UserProfile() {
 									<span className="text-slate-500 select-none">{data.role}</span>
 								</div>
 							</div>
-							<div className="menu cursor-pointer">
-								<MdOutlineMenu size={35}/>
-							</div>
+							{isCreator && !isLoading && (
+								<div className="menu cursor-pointer">
+								{isCreator == 'yes' ? (
+										<MdOutlineMenu size={35}/>
+								) : (<h1>52</h1>)}
+								</div>
+							)}
 						</div>
 						<div className="about-block mt-6 cursor-pointer">
 							<div className="border rounded-xl shadow-xl p-10 hover:shadow-sm transition-all flex flex-col flex-wrap">

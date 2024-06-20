@@ -16,7 +16,7 @@ app.use(express.static('public'));
 app.use(cookieParser());
 
 app.use(session({
-    secret: "6iKfU6KQQqPf4GhPkV17",
+    secret: "6iKfU6KQQqPf4GhPkV18",
     saveUninitialized: true,
     resave: true,
     rolling: false,
@@ -117,7 +117,7 @@ app.get('/products', async (req, res) => {
         sorting.raiting = -1;
     }
     if(filtre == 'data1' && filtre != null) {
-        sorting.createdAt = 1;
+        sorting.createdAt = 1; 
     } 
     if(filtre == 'data-1' && filtre != null) {
         sorting.createdAt = -1;
@@ -146,8 +146,8 @@ app.get('/products', async (req, res) => {
 
 app.get('/myProducts', async (req, res) => {
     const id = req.query.id;
-    let {login} = await User.findOne({_id: id})
-    let data = await Product.find({author: login});
+    let {email} = await User.findOne({_id: id})
+    let data = await Product.find({author: email});
     if(data) {
         try {
             res.send(data).status(200);
@@ -218,45 +218,43 @@ app.get('/product', async (req, res) => {
     res.send(data).status(200);
 });
 
-
 //Вход пользователей и их регистрация
 
 const userSchema = new mongoose.Schema({
     login: {
         type: String,
-        require: true,
-        unique: true,
+        required: true,
     },
     email: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
     },
     password: {
         type: String,
-        require: true,
+        required: true,
         min: 6,
         max: 24,
     },
     avaImage: String,
     role:{
         type: String,
-        require: true,
+        required: true,
     },
     reviews: [{
         user: {
             type: Object,
-            require: true,
+            required: true,
         },
         comment: {
-            type: String,
-            require: true,
+            type: String, 
+            required: true,
             min: 3,
             max: 500,
         },
         raiting: {
             type: Number,
-            require: true,
+            required: true,
             min: 1,
             max: 5,
         }
@@ -264,14 +262,14 @@ const userSchema = new mongoose.Schema({
     cart: [{
         idProduct: {
             type: String,
-            required: true,
-            unique: true
+            // required: true,
+            // unique: true
         },
         title: {
             type: String,
             required: true,
         },
-        description: String,
+        description: String, 
         price: {
             type: Number,
             required: true,
@@ -309,6 +307,7 @@ const userSchema = new mongoose.Schema({
         authorId: {
             type: String,
             required: true,
+            unique: false
         },
     }],
 }, {
@@ -317,13 +316,23 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('user', userSchema);
 
-app.get('/login', async (req, res) => {
-    const { login, password } = req.query;
-    const data = await User.findOne({login: login});
+app.get('/users', async (req, res) => {
+    let data = await User.find();
+    res.send(data);
+});
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    const data = await User.findOne({email: email});
+    console.log(email + ' / ' + data);
     if(data) {
         if(data.password == password) {
-            req.session.username = login;
-            res.send(data).status(200);
+            try {
+                req.session.username = email;
+                res.send(data).status(200); 
+            } catch(err) {
+                console.log(err);
+            } 
         } else {
             res.sendStatus(401);
         }
@@ -333,10 +342,10 @@ app.get('/login', async (req, res) => {
 });
 
 app.get('/user', async (req, res) => {
-    const id = req.query.id;
+    const { id } = req.query;
     const data = await User.findOne({_id: id});
     if(data && id) {
-        data.password = ``;
+        data.password = ``; 
         try {
             res.send(data).status(200);
         } catch (err) {
@@ -347,8 +356,8 @@ app.get('/user', async (req, res) => {
     }
 });
 
-app.post('/users', async (req, res) => {
-    
+app.post('/users', async(req, res) => {
+
     const { login, email, password, role } = req.body;
     
     const newUser = new User({
@@ -357,24 +366,43 @@ app.post('/users', async (req, res) => {
         password: password,
         avaImage: "https://yt3.googleusercontent.com/ytc/AIf8zZTOqVAj1luCxSiohOyyV5yKwi0DDFy6PruvGoCEeg=s900-c-k-c0x00ffffff-no-rj",
         role: role,
-        reviews: [],
-        cart: [],
+        reviews: [], 
+        cart: [{
+            idProduct: '87878787',
+            title: '52',
+            description: '52',
+            price: 52,
+            author: '52',
+            isHotel: true,
+            city: '52',
+            raiting: 52,
+            images: ['52'],
+            phoneNumber: '52',
+            places: 52,
+            authorId: '52',
+        }]
     });
     
     try {
         await newUser.save();
-        req.session.username = newUser.login;
+        req.session.username = email;
+
+        let {cart} = await User.find({email: req.session.username})
+        cart.splice(0, 1);
+        await newUser.save();
+
         res.sendStatus(201);
-    } catch {
+    } catch(error) {
+        console.log(error);
         res.sendStatus(400);
     }
 });
 
 app.delete('/users', async (req, res) => {
-    const login = req.query.login;
-    if(req.session.username == login) {
+    const email = req.query.email;
+    if(req.session.username == email) {
         try {
-            await User.deleteOne({login: login});
+            await User.deleteOne({email: email});
             res.sendStatus(201);
         } catch {
             res.sendStatus(400);
@@ -385,26 +413,29 @@ app.delete('/users', async (req, res) => {
 });
 
 app.get('/session', async (req, res) => {
-    if(req.session.username) {
-        let user = await User.findOne({login: req.session.username});
+    if(req.session.username != undefined) {
+        let user = await User.findOne({email: req.session.username});
         if(user) {
+            user.password = '';
             res.send(user).status(200);
         } else {
-            res.sendStatus(400);
+            res.sendStatus(400); 
         }
     }
+    console.log(req.session.username);
 });
 
 app.get('/check', async (req, res) => {
     if(req.session.username) {
-        const login = req.query.login;
-        if(req.session.username === login) {
-            res.send(true).status(200);
+        const { id } = req.query;
+        const user = await User.findOne({_id: id})
+        if(req.session.username == user.email) {
+            res.send({isCreator: 'yes'}).status(200);
         } else {
-            res.send(false).status(200);
+            res.send({isCreator: 'false'}).status(200);
         }
     } else {
-        res.send(false).status(400);
+        res.send({isCreator: 'false'}).status(400);
     }
 });
 
@@ -485,53 +516,62 @@ app.put('/delete-review', async (req, res) => {
 // Корзина товаров
 
 app.get('/cart', async (req, res) => {
-    // if(req.session.username) {
-        const user = await User.findOne({login: 'test'});
+    if(req.session.username) {
+        const user = await User.findOne({email: req.session.username});
         res.send(user.cart).status(200);
-    // } else {
-        // res.sendStatus(404);
-    // }
+    } else {
+        res.sendStatus(404);
+    }
 });
 
 app.put('/cart-post', async (req, res) => {
     const { id } = req.body;
 
-    const user = await User.findOne({login: req.session.username});
+    const user = await User.findOne({email: req.session.username});
 
-    const product = await Product.findOne({_id: id})
+    const product = await Product.findOne({_id: id});
 
-    try {
-        user.cart.push({
-            idProduct: id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            author: product.author,
-            isHotel: product.isHotel,
-            city: product.city,
-            raiting: product.raiting,
-            images: product.images,
-            phoneNumber: product.phoneNumber,
-            places: product.places,
-            authorId: product.authorId,
-        });
-        await user.save();
-        res.sendStatus(201);
-    } catch {
-        res.sendStatus(400); 
+    // let cart = user.cart;
+    
+    if(user && product) {
+        console.log(user + ' / ' + product);
+        try {
+            user.cart.push({
+                idProduct: product._id,
+                title: product.title,
+                description: product.description,
+                price: product.price,
+                author: product.author,
+                isHotel: product.isHotel,
+                city: product.city,
+                raiting: product.raiting,
+                images: product.images,
+                phoneNumber: product.phoneNumber,
+                places: product.places,
+                authorId: `${product.authorId}`,
+            });
+            // user.cart = cart;
+            await user.save();
+            res.sendStatus(201);
+        } catch(e) {
+            res.sendStatus(400); 
+            console.error(e);
+        }
+    } else {
+        res.sendStatus(404); 
     }
 });
 
 app.put('/cart-delete', async (req, res) => {
     const { id } = req.body;
     
-    const user = await User.findOne({login: req.session.username});
+    const user = await User.findOne({email: req.session.username});
     
     const indexCart = user.cart.findIndex((e) => e.idProduct == id);
 
     user.cart.splice(indexCart, 1)
     
-    try {
+    try { 
         await user.save();
         res.sendStatus(201);
     } catch {
