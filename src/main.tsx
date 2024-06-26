@@ -16,9 +16,10 @@ import { NotFound } from './components/NotFound/NotFound.tsx';
 import { Product } from './pages/Product/Product.tsx';
 import { Cart } from './pages/Cart/Cart';
 import { Register } from './pages/EnterPage/Register.tsx';
+import { Login } from './pages/EnterPage/Login.tsx';
+import { CreateLodging } from './pages/CreateLodging/CreateLodging.tsx';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Login } from './pages/EnterPage/Login.tsx';
 
 const queryClient = new QueryClient()
 
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
   {
     path: "register",
     element: <Register />
+  },
+  {
+    path: "createLodging",
+    element: <CreateLodging />
   },
 ]);
 

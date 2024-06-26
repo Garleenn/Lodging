@@ -12,7 +12,7 @@ let corsOptions = {
 }
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('hotelsImages'));
 app.use(cookieParser());
 
 app.use(session({
@@ -160,27 +160,33 @@ app.get('/myProducts', async (req, res) => {
 });
 
 app.post('/products', async (req, res) => {
-    const { title, description, price, category, image, isGood, countHas, brand } = req.body;
-    // add authorId
+    const { title, description, price, isHotel, city, raiting, phoneNumber, places, images } = req.body;
+    const { login, _id } = await User.findOne({email: req.session.username});
+
+
 
     const product = new Product({
-        title: title,
-        description: description,
-        price: price,
-        category: category,
-        image: image,
-        isMine: true,
-        isGood: isGood,
-        countHas: countHas,
-        brand: brand,
-        author: req.session.username,
+        title,
+        description,
+        price,
+        isHotel,
+        city,
+        raiting,
+        phoneNumber,
+        places,
+        images,
+        author: login,
+        authorId: _id,
     });
+
+    console.log(title, price, _id, isHotel, images);
 
     try {
         await product.save();
         res.sendStatus(201);
-    } catch {
+    } catch(err) {
         res.sendStatus(400);
+        console.log(err);
     }
 });
 
@@ -262,7 +268,7 @@ const userSchema = new mongoose.Schema({
     cart: [{
         idProduct: {
             type: String,
-            // required: true,
+            required: false,
             // unique: true
         },
         title: {
@@ -306,8 +312,7 @@ const userSchema = new mongoose.Schema({
         },
         authorId: {
             type: String,
-            required: true,
-            unique: false
+            required: false,
         },
     }],
 }, {
@@ -324,7 +329,6 @@ app.get('/users', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const data = await User.findOne({email: email});
-    console.log(email + ' / ' + data);
     if(data) {
         if(data.password == password) {
             try {
@@ -367,30 +371,12 @@ app.post('/users', async(req, res) => {
         avaImage: "https://yt3.googleusercontent.com/ytc/AIf8zZTOqVAj1luCxSiohOyyV5yKwi0DDFy6PruvGoCEeg=s900-c-k-c0x00ffffff-no-rj",
         role: role,
         reviews: [], 
-        cart: [{
-            idProduct: '87878787',
-            title: '52',
-            description: '52',
-            price: 52,
-            author: '52',
-            isHotel: true,
-            city: '52',
-            raiting: 52,
-            images: ['52'],
-            phoneNumber: '52',
-            places: 52,
-            authorId: '52',
-        }]
+        cart: [],
     });
     
     try {
         await newUser.save();
         req.session.username = email;
-
-        let {cart} = await User.find({email: req.session.username})
-        cart.splice(0, 1);
-        await newUser.save();
-
         res.sendStatus(201);
     } catch(error) {
         console.log(error);
@@ -430,12 +416,12 @@ app.get('/check', async (req, res) => {
         const { id } = req.query;
         const user = await User.findOne({_id: id})
         if(req.session.username == user.email) {
-            res.send({isCreator: 'yes'}).status(200);
+            res.send({isCreator: true}).status(200);
         } else {
-            res.send({isCreator: 'false'}).status(200);
+            res.send({isCreator: false}).status(200);
         }
     } else {
-        res.send({isCreator: 'false'}).status(400);
+        res.send({isCreator: false}).status(400);
     }
 });
 
@@ -548,7 +534,7 @@ app.put('/cart-post', async (req, res) => {
                 images: product.images,
                 phoneNumber: product.phoneNumber,
                 places: product.places,
-                authorId: `${product.authorId}`,
+                // authorId: `${product.authorId}`,
             });
             // user.cart = cart;
             await user.save();

@@ -43,7 +43,7 @@ class getUser {
 	}
 
 	async Check(id: string) {
-		return axios.get<string>('/check', {
+		return axios.get<boolean>('/check', {
 			params: {
 				id: id
 			}

@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import getProducts from '../services/products.service';
+import { IProduct } from "../types/product.interface";
 
 export const useProducts = (filters: object) => {
 	return useQuery({
@@ -15,5 +16,12 @@ export const useProduct = (id: string | undefined) => {
 		queryFn: () => getProducts.getProducts(id),
 		select: (data) => data.data,
 		enabled: !!id,
+	});
+}
+
+export const usePostProduct = (product: IProduct) => {
+	return useMutation({
+		mutationKey: ['postProduct'], 
+		mutationFn: () => getProducts.postProduct(product),
 	});
 }

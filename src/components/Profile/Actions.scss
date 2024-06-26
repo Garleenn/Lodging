@@ -1,0 +1,18 @@
+.side-menu {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: #fff;
+	width: 25%;
+	height: 100%;
+	z-index: 52;	
+}
+
+@media (max-width: 1024px) {
+	.side-menu {
+		width: 80%;
+	}
+	.nav {
+		display: block;
+	}
+}

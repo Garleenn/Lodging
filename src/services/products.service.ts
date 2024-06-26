@@ -24,6 +24,20 @@ class getProducts {
 			}
 		});
 	}
+
+	async postProduct(product: IProduct) {
+		return axios.post<IProduct>('/products', {
+			title: product.title,
+			description: product.description,
+			price: product.price,
+			isHotel: product.isHotel,
+			city: product.city,
+			raiting: product.raiting,
+			phoneNumber: product.phoneNumber,
+			places: product.places,
+			images: product.images,
+		});
+	}
 }
 
 export default new getProducts()

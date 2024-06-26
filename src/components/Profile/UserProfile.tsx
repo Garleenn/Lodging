@@ -4,6 +4,9 @@ import './UserProfile.scss'
 import { MdOutlineMenu } from "react-icons/md";
 import dayjs from 'dayjs'
 import { IUser } from "../../types/user.interface";
+import { useEffect, useState } from "react";
+import { Header } from "../Header/Header";
+import { Actions } from "./Actions";
 
 
 export function UserProfile() {
@@ -12,17 +15,24 @@ export function UserProfile() {
 
 	const { error, data } = useUserInfo<IUser>(id);
 
-	const { data: isCreator, isLoading	} = useCheck(id);
-
-	console.log(isCreator);
+	const { data: isCreator } = useCheck(id);
 	
 	const createDate = (data: string):string => {
 		return dayjs(data).format('DD.MM.YYYY');
 	}
 
+	const [isHe, setIsHe] = useState<boolean>();
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+
+	useEffect(() => {
+		setIsHe(isCreator);
+	}, [data]);
+
 
 	return (
 		<>
+			<Header />
+			{isOpen && (<Actions setIsOpen={setIsOpen} />)}
 			<div className="flex flex-col items-center w-100 gap-12 my-10">
 				{!error && data ? (
 					<div className="info-user-all">
@@ -34,11 +44,9 @@ export function UserProfile() {
 									<span className="text-slate-500 select-none">{data.role}</span>
 								</div>
 							</div>
-							{isCreator && !isLoading && (
-								<div className="menu cursor-pointer">
-								{isCreator == 'yes' ? (
-										<MdOutlineMenu size={35}/>
-								) : (<h1>52</h1>)}
+							{isHe && (
+								<div className="menu cursor-pointer sm:mt-0 mt-16" onClick={() => setIsOpen(true)}>
+									<MdOutlineMenu size={35}/>
 								</div>
 							)}
 						</div>
