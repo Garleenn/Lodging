@@ -12,7 +12,7 @@ let corsOptions = {
 }
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.static('hotelsImages'));
+app.use(express.static('public'));
 app.use(cookieParser());
 
 app.use(session({
@@ -163,18 +163,8 @@ app.post('/products', async (req, res) => {
     const { title, description, price, isHotel, city, raiting, phoneNumber, places, images } = req.body;
     const { login, _id } = await User.findOne({email: req.session.username});
 
-
-
     const product = new Product({
-        title,
-        description,
-        price,
-        isHotel,
-        city,
-        raiting,
-        phoneNumber,
-        places,
-        images,
+        title, description, price, isHotel, city, raiting, phoneNumber, places, images,
         author: login,
         authorId: _id,
     });
@@ -333,7 +323,7 @@ app.post('/login', async (req, res) => {
         if(data.password == password) {
             try {
                 req.session.username = email;
-                res.send(data).status(200); 
+                res.sendStatus(200); 
             } catch(err) {
                 console.log(err);
             } 
@@ -347,16 +337,21 @@ app.post('/login', async (req, res) => {
 
 app.get('/user', async (req, res) => {
     const { id } = req.query;
-    const data = await User.findOne({_id: id});
-    if(data && id) {
-        data.password = ``; 
-        try {
-            res.send(data).status(200);
-        } catch (err) {
-            res.send(err).status(400);
-        }
+    let data;
+    if(id && id != 'not') {
+        data = await User.findOne({_id: id});
+        data.password = ``;
+    } else if(id == 'not') {
+        data = await User.findOne({email: req.session.username});
+        data.password = ``;
     } else {
-        res.sendStatus(400);
+        res.sendStatus(404);
+    }
+
+    try {
+        res.send(data).status(200);
+    } catch (err) {
+        res.send(err).status(400);
     }
 });
 
@@ -435,21 +430,22 @@ app.get('/logout', async (req, res) => {
 });
 
 app.put('/users', async (req, res) => {
-    const { id, login, email, role, avaImage } = req.body;
+    const { login, email, role, avaImage } = req.body;
     
-    let user = await User.findOne({_id: id});
+    let user = await User.findOne({email: req.session.username});
     
     user.login = login;
     user.email = email;
     user.role = role;
-    if(avaImage) {
-        user.avaImage = avaImage;
-    }
+    // if(avaImage != {} && avaImage != undefined) {
+    //     user.avaImage = avaImage;
+    // } 
     
     try {
         await user.save();
         res.sendStatus(201);
-    } catch {
+    } catch(err) {
+        console.log(err);
         res.sendStatus(400);
     }
 });

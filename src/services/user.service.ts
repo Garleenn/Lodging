@@ -38,6 +38,15 @@ class getUser {
 		});
 	}
 
+	async ChangeProfile(form: IUser) {
+		return axios.put<IUser>('/users', {
+			login: form.login,
+			email: form.email,
+			role: form.role,
+			avaImage: form.avaImage,
+		});
+	}
+
 	async Session() {
 		return axios.get<IUser>('/session');
 	}

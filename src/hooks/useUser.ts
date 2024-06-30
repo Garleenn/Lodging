@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import getUser from '../services/user.service'
-import { IRegister } from "../types/user.interface";
+import { IRegister, IUser } from "../types/user.interface";
 
 export const useUserInfo = (id: string) => {
 	return useQuery({
@@ -29,6 +29,13 @@ export const useUserLogin = (form: IRegister) => {
 	return useMutation({
 		mutationKey: ['userLogin'],
 		mutationFn: () => getUser.Login(form)
+	});
+}
+
+export const useChangeProfile = (form: IUser) => {
+	return useMutation({
+		mutationKey: ['ChangeProfile'],
+		mutationFn: () => getUser.ChangeProfile(form)
 	});
 }
 
