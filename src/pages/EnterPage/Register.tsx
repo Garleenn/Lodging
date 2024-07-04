@@ -4,6 +4,7 @@ import { Header } from "../../components/Header/Header";
 import { IRegister } from "../../types/user.interface";
 import { useRegister } from "../../hooks/useUser";
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 
 export function Register() {
 
@@ -71,6 +72,7 @@ export function Register() {
 				</div>
 				<button type='submit' className="btn mt-10">Зарегестрироваться!</button>
 				{err && (<h3 className="text-red-500 font-bold text-xl mt-5">{err}</h3>)}
+				<Link className='mt-8' to='/login'>Уже есть аккаунт? Войдите!</Link>
 			</form>
 		</>
 	)

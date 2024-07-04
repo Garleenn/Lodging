@@ -4,7 +4,7 @@ import { Header } from "../../components/Header/Header";
 import { IRegister } from "../../types/user.interface";
 import { useUserLogin } from "../../hooks/useUser";
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function Login() {
 
@@ -49,8 +49,9 @@ export function Login() {
 					<input {...register('password', { required: 'Длинна от 6 до 20 символов', minLength: 6, maxLength: 20 })} type="password" placeholder="Введите пароль" />
 					{passwordError && (<p className='text-red-500 pt-2 mb-0'>{passwordError}</p>)}
 				</div>
-				<button type='submit' className="btn mt-10">Войти!</button>
+				<button type='submit' className="btn mt-8">Войти!</button>
 				{err && (<h3 className="text-red-500 font-bold text-xl mt-5">{err}</h3>)}
+				<Link className='mt-8' to='/register'>Ещё нет аккаунта? Зарегестрируйтесь!</Link>
 			</form>
 		</>
 	)
