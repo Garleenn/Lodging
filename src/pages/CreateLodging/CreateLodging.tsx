@@ -6,7 +6,7 @@ import { useState } from "react";
 
 export function CreateLodging() {
 
-	const { register, handleSubmit, reset, formState: { errors } } = useForm<IProduct>();
+	const { register, handleSubmit, reset } = useForm<IProduct>();
 
 	const [product, setProduct] = useState<IProduct>();
 
@@ -38,7 +38,7 @@ export function CreateLodging() {
 					<label className="mt-5">Изображения номера</label>
 					<input type="file" {...register('images', { required: 'Поле обязательно' })}/>
 					<label className="mt-5">Описание номера</label>
-					<textarea {...register('description', { required: 'Поле обязательно' })}/>
+					<textarea {...register('description', { required: 'Поле обязательно' })} />
 					<div className="checkbox flex items-center gap-2">
 						<input className="mt-4 text-purple-600" type="checkbox" {...register('isHotel', { required: 'Поле обязательно' })}/>
 						<label>Это отель?</label>

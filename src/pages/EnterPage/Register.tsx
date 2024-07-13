@@ -59,7 +59,7 @@ export function Register() {
 					<label>Ваш email</label>
 					<input {...register('email', { required: true })} type="email" placeholder="Введите вашу почту" />
 					<label>Ваша роль</label>
-					<select {...register('role', { required: true })}>
+					<select className='select-menu' {...register('role', { required: true })}>
 						<option value="">Выбирете роль</option>
 						<option value="Отель">Отель</option>
 						<option value="Частник">Частный</option>

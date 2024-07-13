@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IRegister, IUser } from "../types/user.interface";
+import { IIsCreator, IRegister, IReviews, IUser } from "../types/user.interface";
 import { IProduct } from "../types/product.interface";
 axios.defaults.baseURL = 'http://localhost:3005'
 axios.defaults.withCredentials = true
@@ -7,9 +7,9 @@ axios.defaults.withCredentials = true
 class getUser {
 
 	async getUserInfo(id: string) {
-		return axios.get<IUser>('/user', {
+		return await axios.get<IUser>('/user', {
 			params: {
-				id: id,
+				id
 			}
 		});
 	}
@@ -17,7 +17,7 @@ class getUser {
 	async getUserProducts(id: string) {
 		return axios.get<IProduct[]>('/myProducts', {
 			params: {
-				id: id
+				id
 			}
 		});
 	}
@@ -44,6 +44,7 @@ class getUser {
 			email: form.email,
 			role: form.role,
 			avaImage: form.avaImage,
+			about: form.about
 		});
 	}
 
@@ -51,11 +52,31 @@ class getUser {
 		return axios.get<IUser>('/session');
 	}
 
+	async logOut() {
+		return axios.post('/logout');
+	}
+
 	async Check(id: string) {
-		return axios.get<boolean>('/check', {
+		return axios.get<IIsCreator>('/check', {
 			params: {
-				id: id
+				id
 			}
+		});
+	}
+
+	async addReview(form: IReviews) {
+		return axios.put<IReviews>('/reviews', {
+			id: form.user.id,
+			comment: form.comment,
+			raiting: form.raiting,
+			idProfile: form.user.idProfile,
+		});
+	}
+
+	async removeReview(form: {idReview: string, idProfile: string}) {
+		return axios.put<IReviews>('/delete-review', {
+			idReview: form.idReview,
+			idProfile: form.idProfile,
 		});
 	}
 }

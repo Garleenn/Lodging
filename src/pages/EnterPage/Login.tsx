@@ -4,7 +4,7 @@ import { Header } from "../../components/Header/Header";
 import { IRegister } from "../../types/user.interface";
 import { useUserLogin } from "../../hooks/useUser";
 import { useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export function Login() {
 
@@ -18,7 +18,7 @@ export function Login() {
 	const [form, setForm] = useState<IRegister>();
 	const [err, setErr] = useState(``);
 
-	const { mutate, isError } = useUserLogin(form);
+	const { mutate, isError } = useUserLogin<IRegister>(form);
 	
 	const login: SubmitHandler<IRegister> = date => {
 		setForm(date);
@@ -26,14 +26,11 @@ export function Login() {
 		if (isError) {
 			setErr(`Errorchik`);
 		} else {
-			mutate(date);
+			mutate();
 			reset();
 			setErr(``);
-			// navigate(`/`);
 		}
 	}
-
-	const navigate = useNavigate();
 
 
 	return (

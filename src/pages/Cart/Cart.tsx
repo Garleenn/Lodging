@@ -8,17 +8,14 @@ import { useState } from "react";
 
 export function Cart() {
 
-	const { isLoading, error, data, refetch } = useCart();
+	const { isLoading, error, data } = useCart();
 
 	const [idRemoved, setIdRemoved] = useState<string>(``);
 
-	const { mutate, isPending } = useRemoveFromCart(idRemoved);
+	const { mutate } = useRemoveFromCart(idRemoved);
 	
 	const removeProduct = (id: string) => {
 		setIdRemoved(id);
-		if(!isPending) {
-			refetch();
-		}
 		mutate();
 	}
 
@@ -30,7 +27,7 @@ export function Cart() {
 				<div className="cart xl:mx-20 mx-3">
 					<h1 className="font-bold my-6">Избранное: </h1>
 					{data && !error ? (
-						<div className="cart-container flex gap-12">
+						<div className="cart-container flex flex-wrap gap-12">
 							{data.map((product: ICart) => (
 								<div className="card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product.idProduct}>
 									<div className="image-card select-none">
@@ -43,7 +40,7 @@ export function Cart() {
 										<i>Рейтинг: {product.raiting} звёзд</i>
 										<span className='text-xl'>Цена: <b>{product.price} руб.</b></span>
 										<Link role='button' className='w-100 btn mt-2 text-center' to={'/product/' + product.idProduct}>Подробнее</Link>
-										<div className="favourites" onClick={() => {removeProduct(product.idProduct); refetch()}}>
+										<div className="favourites" onClick={() => removeProduct(product.idProduct)}>
 											<GrFavorite size={32} className='w-fit' />
 										</div>
 									</div>

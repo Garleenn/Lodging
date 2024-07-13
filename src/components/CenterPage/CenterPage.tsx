@@ -54,7 +54,7 @@ export function CenterPage(props: IProps) {
 					<option value="true">Отель</option>
 					<option value="false">Частные дома</option>
 				</select>
-				<input onChange={e => setDetails(prev => { return {...prev, city: e.target.value}})} value={details.city} type="search" placeholder='Город:'/>
+				<input type="search" placeholder='Город:'/>
 				<input onChange={e => setDetails(prev => { return {...prev, sPrice: e.target.value}})} value={details.sPrice} min={0} type="number" placeholder='Цена от:'/>
 				<input onChange={e => setDetails(prev => { return {...prev, dPrice: e.target.value}})} value={details.dPrice} max={2000000} type="number" placeholder='Цена до:'/>
 				<select ref={filterRef} defaultValue={'null'}>

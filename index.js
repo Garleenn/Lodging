@@ -169,8 +169,6 @@ app.post('/products', async (req, res) => {
         authorId: _id,
     });
 
-    console.log(title, price, _id, isHotel, images);
-
     try {
         await product.save();
         res.sendStatus(201);
@@ -210,8 +208,13 @@ app.put('/products', async (req, res) => {
 
 app.get('/product', async (req, res) => {
     const id = req.query.id;
-    const data = await Product.findOne({_id: id});
-    res.send(data).status(200);
+    
+    try {
+        const data = await Product.findOne({_id: id});
+        res.send(data).status(200);
+    } catch {
+        res.sendStatus(404);
+    }
 });
 
 //Вход пользователей и их регистрация
@@ -237,6 +240,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    about: String,
+    grade: Number,
     reviews: [{
         user: {
             type: Object,
@@ -348,6 +353,12 @@ app.get('/user', async (req, res) => {
         res.sendStatus(404);
     }
 
+    if(data.reviews.length != 0) {
+        data.reviews.forEach(e => {
+            data.grade += e.raiting / data.reviews.length
+        });
+    }
+
     try {
         res.send(data).status(200);
     } catch (err) {
@@ -356,7 +367,6 @@ app.get('/user', async (req, res) => {
 });
 
 app.post('/users', async(req, res) => {
-
     const { login, email, password, role } = req.body;
     
     const newUser = new User({
@@ -367,6 +377,7 @@ app.post('/users', async(req, res) => {
         role: role,
         reviews: [], 
         cart: [],
+        grade: 0
     });
     
     try {
@@ -403,24 +414,23 @@ app.get('/session', async (req, res) => {
             res.sendStatus(400); 
         }
     }
-    console.log(req.session.username);
 });
 
 app.get('/check', async (req, res) => {
     if(req.session.username) {
         const { id } = req.query;
         const user = await User.findOne({_id: id})
-        if(req.session.username == user.email) {
-            res.send({isCreator: true}).status(200);
+        if(req.session.username == user.email && user) {
+            res.send({isCreator: 'you'}).status(200);
         } else {
-            res.send({isCreator: false}).status(200);
+            res.send({isCreator: 'not'}).status(200);
         }
     } else {
-        res.send({isCreator: false}).status(400);
+        res.send({isCreator: 'not'}).status(400);
     }
 });
 
-app.get('/logout', async (req, res) => {
+app.post('/logout', async (req, res) => {
     if(req.session.username) {
         req.session.destroy();
         res.sendStatus(200);
@@ -430,16 +440,18 @@ app.get('/logout', async (req, res) => {
 });
 
 app.put('/users', async (req, res) => {
-    const { login, email, role, avaImage } = req.body;
+    const { login, email, role, about, avaImage } = req.body;
     
     let user = await User.findOne({email: req.session.username});
     
     user.login = login;
     user.email = email;
     user.role = role;
+    user.about = about;
+    console.log(user.about)
     // if(avaImage != {} && avaImage != undefined) {
     //     user.avaImage = avaImage;
-    // } 
+    // }
     
     try {
         await user.save();
@@ -451,39 +463,42 @@ app.put('/users', async (req, res) => {
 });
 
 app.put('/reviews', async (req, res) => {
-    const { comment, raiting, login } = req.body;
+    const { comment, raiting, id, idProfile } = req.body;
     
-    let userSession = await User.findOne({login: req.session.username});
+    let userSession = await User.findOne({email: req.session.username});
+    let user = await User.findOne({_id: id});
     
-    if(login != req.session.username) {
-        let user = await User.findOne({login: login});
-        
-        user.reviews.push({
-            user: {
-                login: userSession.login,
-                avaImage: userSession.avaImage,
-            },
-            comment: comment,
-            raiting: raiting,
-        });
-        
-        try {
-            await user.save();
-            res.sendStatus(201);
-        } catch {
-            res.sendStatus(400);
+    if(idProfile != user._id) {
+        if(user.email != req.session.username) {
+            user.reviews.push({
+                user: {
+                    login: userSession.login,
+                    avaImage: userSession.avaImage,
+                    idProfile: idProfile,
+                },
+                comment: comment,
+                raiting: raiting,
+            });
+            
+            try {
+                await user.save();
+                res.sendStatus(201);
+            } catch(e) {
+                res.sendStatus(400);
+                console.log(e);
+            }
+        } else {
+            res.sendStatus(401);
         }
-    } else {
-        res.sendStatus(401);
     }
 });
 
 app.put('/delete-review', async (req, res) => {
-    const { login, id } = req.body;
+    const { idReview, idProfile } = req.body;
     
-    let userReview = await User.findOne({login: login});
+    let userReview = await User.findOne({_id: idProfile});
     
-    let indexReview = userReview.reviews.findIndex((e) => e._id == id);
+    let indexReview = userReview.reviews.findIndex((e) => e._id == idReview);
 
     userReview.reviews.splice(indexReview, 1)
     
@@ -516,7 +531,6 @@ app.put('/cart-post', async (req, res) => {
     // let cart = user.cart;
     
     if(user && product) {
-        console.log(user + ' / ' + product);
         try {
             user.cart.push({
                 idProduct: product._id,

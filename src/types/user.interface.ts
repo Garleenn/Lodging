@@ -8,12 +8,19 @@ export interface IUser {
 	reviews: IReviews[],
 	cart: ICart[],
 	createdAt: string,
+	grade: number
 }
 
-interface IReviews {
-	user: string,
+export interface IReviews {
+	user: {
+		login: string,
+		avaImage: string,
+		id: string,
+		idProfile: string,
+	},
 	comment: string,
 	raiting: number,
+	_id: string
 }
 
 export interface ICart {
@@ -33,4 +40,8 @@ export interface ICart {
 export interface IRegister extends IUser {
 	password: string,
 	exPassword: string,
+}
+
+export interface IIsCreator {
+	isCreator: string
 }

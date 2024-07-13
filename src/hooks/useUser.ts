@@ -1,6 +1,8 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getUser from '../services/user.service'
-import { IRegister, IUser } from "../types/user.interface";
+import { IRegister, IReviews, IUser } from "../types/user.interface";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const useUserInfo = (id: string) => {
 	return useQuery({
@@ -26,10 +28,20 @@ export const useRegister = (form: IRegister) => {
 }
 
 export const useUserLogin = (form: IRegister) => {
-	return useMutation({
+	const { mutate, isError } = useMutation({
 		mutationKey: ['userLogin'],
-		mutationFn: () => getUser.Login(form)
+		mutationFn: () => getUser.Login(form),
+		onSuccess() {
+			navigate('/');
+			QueryClient.invalidateQueries({queryKey: ['userSession']});
+		}
 	});
+	
+	const QueryClient = useQueryClient();
+
+	const navigate = useNavigate();
+
+	return { mutate, isError }
 }
 
 export const useChangeProfile = (form: IUser) => {
@@ -53,4 +65,48 @@ export const useCheck = (id: string) => {
 		queryFn: () => getUser.Check(id),
 		select: (data) => data.data
 	});
+}
+
+export const useAddReview = (form: IReviews) => {
+	const { mutate, isError, isSuccess } = useMutation({
+		mutationKey: ['addReview'],
+		mutationFn: () => getUser.addReview(form)
+	});
+
+	const QueryClient = useQueryClient();
+
+	useEffect(() => {
+		QueryClient.invalidateQueries({queryKey: ['user']});
+	}, [isSuccess, mutate]);
+
+	return { mutate, isError }
+}
+
+export const useRemoveReview = (form: {idReview: string, idProfile: string}) => {
+	const { mutate, isError, isPending, isSuccess } = useMutation({
+		mutationKey: ['removeReview'],
+		mutationFn: () => getUser.removeReview(form),
+	});
+
+	const QueryClient = useQueryClient();
+
+	useEffect(() => {
+		QueryClient.invalidateQueries({queryKey: ['user']});
+	}, [isSuccess, mutate]);
+
+	return { mutate, isError, isPending }
+}
+
+export const useLogOut = () => {
+	const { mutate } = useMutation({
+		mutationKey: ['logOut'],
+		mutationFn: () => getUser.logOut(),
+		onSuccess() {
+			QueryClient.invalidateQueries({queryKey: ['userSession']});
+		}
+	});
+
+	const QueryClient = useQueryClient();
+
+	return { mutate }
 }

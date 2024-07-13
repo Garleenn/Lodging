@@ -1,6 +1,7 @@
 import { IoMdClose } from 'react-icons/io'
 import './Actions.scss'
 import { Link } from 'react-router-dom'
+import { useLogOut } from '../../hooks/useUser'
 
 interface IProps {
 	setIsOpen: (isOpen: boolean) => void
@@ -8,6 +9,7 @@ interface IProps {
 
 export function Actions(props: IProps) {
 
+	const { mutate } = useLogOut();
 
 	return (
 		<>
@@ -18,6 +20,7 @@ export function Actions(props: IProps) {
 						<li className='xl:text-xl text-base'><Link to='/changeProfile'>Изменить данные профиля</Link></li>
 						<li className='xl:text-xl text-base'><Link to='/createLodging'>Разместить ночлег</Link></li>
 						<li className='xl:text-xl text-base'><Link to='/errors'>Сообщить об ошибке</Link></li>
+						<li className='xl:text-xl text-base'><Link to='/' onClick={() => mutate()}>Выйти из аккаунта</Link></li>
 					</ul>
 				</div>
 			</div>
