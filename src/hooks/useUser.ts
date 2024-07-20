@@ -34,6 +34,7 @@ export const useUserLogin = (form: IRegister) => {
 		onSuccess() {
 			navigate('/');
 			QueryClient.invalidateQueries({queryKey: ['userSession']});
+			navigate(0);
 		}
 	});
 	
@@ -103,8 +104,11 @@ export const useLogOut = () => {
 		mutationFn: () => getUser.logOut(),
 		onSuccess() {
 			QueryClient.invalidateQueries({queryKey: ['userSession']});
+			navigate(0);
 		}
 	});
+
+	const navigate = useNavigate();
 
 	const QueryClient = useQueryClient();
 

@@ -86,7 +86,7 @@ const productSchema = new mongoose.Schema({
     authorId: {
         type: String,
         required: true,
-    }
+    } 
 }, {
     timestamps: true,
 });
@@ -146,16 +146,19 @@ app.get('/products', async (req, res) => {
 
 app.get('/myProducts', async (req, res) => {
     const id = req.query.id;
-    let {email} = await User.findOne({_id: id})
-    let data = await Product.find({author: email});
-    if(data) {
-        try {
-            res.send(data).status(200);
-        } catch (error) {
-            res.send(error).status(400);
+    let user = await User.findOne({_id: id});
+    if(user.email) {
+        const email = user.email;
+        let data = await Product.find({author: email});
+        if(data) { 
+            try {
+                res.send(data).status(200);
+            } catch (error) {
+                res.send(error).status(400);
+            }
+        } else {
+            res.send('Товаров не найдено').status(200);
         }
-    } else {
-        res.send('Товаров не найдено').status(200);
     }
 });
 
@@ -343,26 +346,33 @@ app.post('/login', async (req, res) => {
 app.get('/user', async (req, res) => {
     const { id } = req.query;
     let data;
-    if(id && id != 'not') {
-        data = await User.findOne({_id: id});
-        data.password = ``;
+    if(id.length == 24) {
+        const user = await User.findOne({_id: id});
+        if(user) {
+            data = user;
+            data.password = ``;
+        }
     } else if(id == 'not') {
-        data = await User.findOne({email: req.session.username});
-        data.password = ``;
+        const user = await User.findOne({email: req.session.username});
+        if(user) {
+            data = user;
+            data.password = ``;
+        }
     } else {
         res.sendStatus(404);
     }
 
-    if(data.reviews.length != 0) {
+    if(data && data.reviews.length != 0) {
         data.reviews.forEach(e => {
-            data.grade += e.raiting / data.reviews.length
+            data.grade += e.raiting / data.reviews.length;
         });
     }
-
+    
     try {
         res.send(data).status(200);
     } catch (err) {
-        res.send(err).status(400);
+        res.sendStatus(400);
+        console.error(err);
     }
 });
 
