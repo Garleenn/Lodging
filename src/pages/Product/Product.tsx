@@ -6,6 +6,7 @@ import './Product.scss'
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
 import { useProduct } from '../../hooks/useProducts';
 import { useAddToCart } from '../../hooks/useCart';
+import { ModalProduct } from '../../components/ProductModal/ModalProduct';
 
 export function Product() {
 
@@ -38,10 +39,18 @@ export function Product() {
 		refetch();
 	}
 
+	const [isOpen, setIsOpen] = useState(false);
+
 
 	return (
 		<>
 		<Header />
+		{isOpen && data && (
+			<>
+				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
+				<ModalProduct phone={data?.phoneNumber} setIsOpen={setIsOpen} />
+			</>
+		)}
 			{isLoading ? (
 					<div className="flex justify-center my-20">
 						<h1 className='text-center'>Загрузка...</h1>
@@ -81,7 +90,7 @@ export function Product() {
 							<span className='text-xl'>Цена: <b>{data.price} руб.</b></span>
 							<div className="bttns flex gap-4">
 								<button role='button' className='w-100 btn mt-2 text-center border border-emerald-500'>Забронировать</button>
-								<button role='button' className='w-100 btn mt-2 text-center'>Узнать телефон</button>
+								<button role='button' className='w-100 btn mt-2 text-center' onClick={() => setIsOpen(true)}>Узнать телефон</button>
 							</div>
 						</div>
 					</div>) : (

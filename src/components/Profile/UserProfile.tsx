@@ -22,7 +22,9 @@ export function UserProfile() {
 	let [aboutReplaced, setAboutReplaced] = useState(``);
 
 	useEffect(() => {
-		if(data) setAboutReplaced(data.about.replace(/\n/g, '<br/>'));
+		if(data && data.about) {
+			setAboutReplaced(data.about.replace(/\n/g, '<br/>'));
+		} 
 	}, [data]);
 
 

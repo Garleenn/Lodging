@@ -1,0 +1,27 @@
+.modal-phone {
+    background-color: #fff;
+    position: fixed;
+    top: 25%;
+    z-index: 52;
+    border: 3px solid #000;
+    border-radius: 30px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-window {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
