@@ -1,10 +1,20 @@
 .products-container {
 	margin: 20px 50px;
+	align-items: stretch;
 }
 
 .card {
 	position: relative;
 	transition: all 320ms;
+	padding-bottom: 50px;
+
+	.btn-link-bottom {
+		position: absolute;
+		bottom: 10px;
+		left: 10px;
+		right: 10px;
+	}
+
 	&:hover {
 		transform: translateY(-12px);
 	}

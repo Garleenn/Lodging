@@ -48,7 +48,7 @@ export function Product() {
 		{isOpen && data && (
 			<>
 				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
-				<ModalProduct phone={data?.phoneNumber} setIsOpen={setIsOpen} />
+				<ModalProduct phone={data.phoneNumber} setIsOpen={setIsOpen} />
 			</>
 		)}
 			{isLoading ? (
@@ -59,7 +59,7 @@ export function Product() {
 				<div className="product-container flex justify-center mx-48 my-12">
 					{data && !error ? (<div className="product-info flex flex-row gap-12">
 						<div className="image-container flex flex-col">
-							{data&& data.images.length > 1 && (
+							{data && data.images.length > 1 && (
 								<div className="arrow-left arrow" onClick={sliderLeft}>
 									<span>
 										<FaArrowLeftLong size={24} />

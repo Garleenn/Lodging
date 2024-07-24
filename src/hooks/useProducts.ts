@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import getProducts from '../services/products.service';
 import { IProduct } from "../types/product.interface";
+import { useNavigate } from "react-router-dom";
 
 export const useProducts = (filters: object) => {
 	return useQuery({
@@ -20,8 +21,15 @@ export const useProduct = (id: string | undefined) => {
 }
 
 export const usePostProduct = (product: IProduct) => {
-	return useMutation({
+	const { mutate, isError } = useMutation({
 		mutationKey: ['postProduct'], 
 		mutationFn: () => getProducts.postProduct(product),
+		onSuccess() {
+			navigate('/');
+		}
 	});
+
+	const navigate = useNavigate();		
+
+	return { mutate, isError }
 }

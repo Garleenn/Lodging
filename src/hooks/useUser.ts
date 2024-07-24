@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getUser from '../services/user.service'
 import { IRegister, IReviews, IUser } from "../types/user.interface";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const useUserInfo = (id: string) => {
 	return useQuery({
@@ -21,10 +21,21 @@ export const useUserProducts = (id: string) => {
 }
 
 export const useRegister = (form: IRegister) => {
-	return useMutation({
+	const { mutate, isError } = useMutation({
 		mutationKey: ['userPost52'],
 		mutationFn: () => getUser.Register(form),
-	})
+		onSuccess() {
+			navigate('/');
+			QueryClient.invalidateQueries({queryKey: ['userSession']});
+			navigate(0);
+		}
+	});
+
+	const QueryClient = useQueryClient();
+
+	const navigate = useNavigate();
+
+	return { mutate, isError }
 }
 
 export const useUserLogin = (form: IRegister) => {

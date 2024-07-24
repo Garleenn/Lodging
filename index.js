@@ -5,18 +5,22 @@ const cors = require('cors');
 const port = 3005;
 const session = require('express-session');
 const cookieParser = require("cookie-parser");
+const fs = require('fs');
+const path = require('path');
 
 let corsOptions = {
     origin: 'http://localhost:5173',
     credentials: true,
 }
 app.use(cors(corsOptions));
-app.use(express.json());
 app.use(express.static('public'));
 app.use(cookieParser());
 
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 50000}));
+
 app.use(session({
-    secret: "6iKfU6KQQqPf4GhPkV18",
+    secret: "6iKfU6KQQqPf4GhPkV1852",
     saveUninitialized: true,
     resave: true,
     rolling: false,
@@ -146,28 +150,52 @@ app.get('/products', async (req, res) => {
 
 app.get('/myProducts', async (req, res) => {
     const id = req.query.id;
-    let user = await User.findOne({_id: id});
-    if(user.email) {
-        const email = user.email;
-        let data = await Product.find({author: email});
-        if(data) { 
-            try {
-                res.send(data).status(200);
-            } catch (error) {
-                res.send(error).status(400);
+    if(id.length == 24) {
+        let user = await User.findOne({_id: id});
+        if(user && user.email != ``) {
+            const email = user.email;
+            let data = await Product.find({author: email});
+            if(data) { 
+                try {
+                    res.send(data).status(200);
+                } catch (error) {
+                    res.send(error).status(400);
+                }
+            } else {
+                res.send('Товаров не найдено').status(200);
             }
         } else {
-            res.send('Товаров не найдено').status(200);
+            res.sendStatus(404);
         }
     }
 });
 
 app.post('/products', async (req, res) => {
-    const { title, description, price, isHotel, city, raiting, phoneNumber, places, images } = req.body;
-    const { login, _id } = await User.findOne({email: req.session.username});
+    const { title, description, price, isHotel, city, phoneNumber, places, images } = req.body;
+    const { login, _id, grade } = await User.findOne({email: req.session.username});
+
+    const convertedImages = [];
+
+    if(images.length > 0) {
+        for(let i = 0; i < images.length; i++) {
+            let avaImage = images[i];
+            const base64String = avaImage.replace(/^data:.+;base64,/, '');
+            const buffer = Buffer.from(base64String, 'base64');
+            const filePath = path.join(__dirname, 'public', `${_id}_${places}_product${[i]}.png`);
+    
+            try {
+                await fs.promises.writeFile(filePath, buffer);
+                convertedImages.push(`http://localhost:3005/${_id}_${places}_product${[i]}.png`);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
 
     const product = new Product({
-        title, description, price, isHotel, city, raiting, phoneNumber, places, images,
+        title, description, price, isHotel, city, phoneNumber, places,
+		images: convertedImages,
         author: login,
         authorId: _id,
     });
@@ -294,7 +322,6 @@ const userSchema = new mongoose.Schema({
         },
         raiting: {
             type: String,
-            required: true,
         },
         images: [{
             type: String,
@@ -429,11 +456,17 @@ app.get('/session', async (req, res) => {
 app.get('/check', async (req, res) => {
     if(req.session.username) {
         const { id } = req.query;
-        const user = await User.findOne({_id: id})
-        if(req.session.username == user.email && user) {
-            res.send({isCreator: 'you'}).status(200);
-        } else {
-            res.send({isCreator: 'not'}).status(200);
+        if(id.length == 24) {
+            const user = await User.findOne({_id: id})
+            if(user && user.email != ``) {
+                if(req.session.username == user.email) {
+                    res.send({isCreator: 'you'}).status(200);
+                } else {
+                    res.send({isCreator: 'not'}).status(200);
+                }
+            } else {
+                res.send({isCreator: 'not'}).status(400);
+            }
         }
     } else {
         res.send({isCreator: 'not'}).status(400);
@@ -458,10 +491,18 @@ app.put('/users', async (req, res) => {
     user.email = email;
     user.role = role;
     user.about = about;
-    console.log(user.about)
-    // if(avaImage != {} && avaImage != undefined) {
-    //     user.avaImage = avaImage;
-    // }
+    if(typeof avaImage === 'string') {
+        const base64String = avaImage.replace(/^data:.+;base64,/, '');
+        const buffer = Buffer.from(base64String, 'base64');
+        const filePath = path.join(__dirname, 'public', `${user._id}.png`);
+
+        try {
+            await fs.promises.writeFile(filePath, buffer);
+            user.avaImage = `http://localhost:3005/${user._id}.png`;
+        } catch (error) {
+            console.log(error)
+        }
+    }
     
     try {
         await user.save();
@@ -538,25 +579,36 @@ app.put('/cart-post', async (req, res) => {
 
     const product = await Product.findOne({_id: id});
 
-    // let cart = user.cart;
-    
+    let newProduct = {
+        idProduct: product._id,
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        author: product.author,
+        isHotel: product.isHotel,
+        city: product.city,
+        raiting: product.raiting,
+        images: product.images,
+        phoneNumber: product.phoneNumber,
+        places: product.places,
+        authorId: product.authorId,
+    }
+
     if(user && product) {
+        if(user.cart.length > 0) {
+            for(let i = 0; i < user.cart.length; i++) {
+                let cartItem = user.cart[i];
+                if(id != cartItem.idProduct) {
+                    user.cart.push(newProduct);
+                }
+            }
+        } else {
+            user.cart.push(newProduct);
+        }
+
+    
+
         try {
-            user.cart.push({
-                idProduct: product._id,
-                title: product.title,
-                description: product.description,
-                price: product.price,
-                author: product.author,
-                isHotel: product.isHotel,
-                city: product.city,
-                raiting: product.raiting,
-                images: product.images,
-                phoneNumber: product.phoneNumber,
-                places: product.places,
-                // authorId: `${product.authorId}`,
-            });
-            // user.cart = cart;
             await user.save();
             res.sendStatus(201);
         } catch(e) {

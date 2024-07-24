@@ -1,63 +1,59 @@
-import { useRef } from 'react'
 import './CenterPage.scss'
-import { useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 interface IProps {
 	setFilters: (filters: any) => void,
-	setIsRefetch: (isRefetch: number) => void,
+	refetch: void | any
+}
+
+interface IFind {
+		city?: string,
+		sPrice?: number,
+		dPrice?: number,
+		title?: string,
+		isHotel?: boolean,
+		filters?: string,
 }
 
 export function CenterPage(props: IProps) {
 
-	const typeRef = useRef(null);
-	const filterRef = useRef(null);
+	const { register, handleSubmit } = useForm<IFind>();
 
-	const [details, setDetails] = useState({
-		city: ``,
-		sPrice: null,
-		dPrice: null,
-		title: ``,
-	});
-
-
-	const filtreProducts = () => {
-		props.setFilters((prev: object) => {
+	const submit: SubmitHandler<IFind> = async data => {
+		await props.setFilters((prev: object) => {
 			return {
 				...prev,
-				isHotel: typeRef.current.value,
-				filtre: filterRef.current.value,
+				isHotel: data?.isHotel,
+				filtre: data?.filters,
+				city: data?.city,
+				sPrice: data?.sPrice,
+				dPrice: data?.dPrice,
+				title: data?.title
+			}
+		});
 
-				city: details.city,
-				sPrice: details.sPrice,
-				dPrice: details.dPrice,
-				title: details.title
-			}
-		});
-		props.setIsRefetch((prev: number) => {
-			return {
-				...prev,
-				refetch: prev += 1
-			}
-		});
+		props.refetch();
+		console.log(52)
 	}
 	
 
 	return (
 		<>
+		<form onSubmit={handleSubmit(submit)}>
 			<div className="main-container flex items-center flex-col">
 				<div className="image-block"></div>
-				<input onChange={e => setDetails(prev => { return {...prev, title: e.target.value}})} value={details.title} className='top-input w-1/4' type="search" placeholder='Найти ночлег'/>
+				<input {...register('title')} className='top-input w-1/4' type="search" placeholder='Найти ночлег'/>
 			</div>
 			<div className="flex justify-center filtre-container p-8 gap-8">
-				<select ref={typeRef} defaultValue={'null'}>
+				<select {...register('isHotel')} defaultValue={'null'}>
 					<option value='null'>Тип</option>
 					<option value="true">Отель</option>
 					<option value="false">Частные дома</option>
 				</select>
-				<input type="search" placeholder='Город:'/>
-				<input onChange={e => setDetails(prev => { return {...prev, sPrice: e.target.value}})} value={details.sPrice} min={0} type="number" placeholder='Цена от:'/>
-				<input onChange={e => setDetails(prev => { return {...prev, dPrice: e.target.value}})} value={details.dPrice} max={2000000} type="number" placeholder='Цена до:'/>
-				<select ref={filterRef} defaultValue={'null'}>
+				<input {...register('city')} type="search" placeholder='Город:'/>
+				<input {...register('sPrice')} min={0} type="number" placeholder='Цена от:'/>
+				<input {...register('dPrice')} max={2000000} type="number" placeholder='Цена до:'/>
+				<select {...register('filters')} defaultValue={'null'}>
 					<option value='null'>Сортировать</option>
 					<option value="price-1">По убыванию цены</option>
 					<option value="price1">По возрастанию цены</option>
@@ -66,8 +62,9 @@ export function CenterPage(props: IProps) {
 					<option value="data1">Сначала старые</option>
 					<option value="data-1">Сначала новые</option>
 				</select>
-				<button onClick={filtreProducts} className='rounded-none'>Найти</button>
+				<button type='submit' className='rounded-none'>Найти</button>
 			</div>
+		</form>
 		</>
 	)
 }

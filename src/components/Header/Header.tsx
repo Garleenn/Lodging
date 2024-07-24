@@ -40,7 +40,8 @@ export function Header() {
 						) : (<Link to='/login'><button>Войти!</button></Link>)}
 				</nav>
 				<MdOutlineMenu onClick={() => setIsOpen(true)} className='burger-btn hidden' size={40}/>
-				{isOpen && (<Menu setIsOpen={setIsOpen} />)}
+				{isOpen && data && (<Menu setIsOpen={setIsOpen} idProfile={data._id} />)}
+				{isOpen && !data && (<Menu setIsOpen={setIsOpen} idProfile={'not'} />)}
 			</div>
 		</>
 	)

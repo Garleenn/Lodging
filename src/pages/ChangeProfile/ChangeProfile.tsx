@@ -5,7 +5,7 @@ import { IUser } from "../../types/user.interface";
 import { useChangeProfile, useUserInfo } from "../../hooks/useUser";
 
 export function ChangeProfile() {
-  const { register, handleSubmit } = useForm<IUser>();
+  const { register, handleSubmit, setValue } = useForm<IUser>();
 
 	const [profile, setProfile] = useState<IUser>();
 
@@ -22,14 +22,16 @@ export function ChangeProfile() {
   const { data, isError, isLoading } = useUserInfo('not');
 
 	const convertFileAvatar = (event: Event | any) => {
-		let file = event.target.files[0];
-		const reader = new FileReader();
-		reader.onload = () => {
-			setProfile((prev: any) => { return { ...prev, avaImage: reader.result } });
-			console.log(file.name);
-		};
-		reader.readAsDataURL(file);
-	}
+    let file = event.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      // setProfile((prev: any) => ({ ...prev, avaImage: reader.result }));
+			setValue('avaImage', reader.result)
+    };
+    
+    reader.readAsDataURL(file);
+  };
 	
 
 	return (
@@ -42,7 +44,7 @@ export function ChangeProfile() {
 						<label className="mt-5">Ваш логин</label>
 						<input type="text" {...register('login', { required: 'Поле обязательно', value: data.login })}/>
 						<label className="mt-5">Изображение профиля</label>
-						<input type="file" {...register('avaImage')} onChange={(event) => convertFileAvatar(event)} />
+						<input type="file" onChange={(event) => convertFileAvatar(event)} />
 						<label className="mt-5">О вас</label>
 						<textarea rows={10} { ...register('about', { required: 'Поле обязательно', value: data.about }) }/>
 						<label className="mt-5">Электронная почта</label>

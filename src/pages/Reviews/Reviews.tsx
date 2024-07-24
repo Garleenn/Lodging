@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { useAddReview, useRemoveReview, useSession, useUserInfo } from "../../hooks/useUser";
 import { IReviews, IUser } from "../../types/user.interface";
@@ -75,13 +75,13 @@ export function Reviews() {
 				<div className="review flex flex-col items-center w-100 gap-12 my-10">
 					<div className="info-user-all">
 						<div className="flex flex-row justify-between w-100 gap-5 items-center">
-							<div className="profile-info flex items-center gap-4">
+							<Link to={`/user/${data._id}`} className="profile-info flex items-center gap-4">
 								<img src={data.avaImage} alt={data.login} />
 								<div className="flex flex-col">
 									<h2 className="font-bold xl:text-3xl text-xl">{data.login}</h2>
 									<span className="text-slate-500 select-none">{data.role}</span>
 								</div>
-							</div>
+							</Link>
 							<div className="flex gap-4 items-center">
 								Ср. оценка: <b>{data.grade}</b>
 							</div>
@@ -90,13 +90,13 @@ export function Reviews() {
 
 						{!session.isError && session.data && data._id != session.data._id && (
 							<form className="send-review mt-12" onSubmit={handleSubmit(submit)}>
-								<div className="profile-info flex items-center gap-4">
+								<Link to={`/user/${session.data._id}`} className="profile-info flex items-center gap-4">
 									<img src={session.data.avaImage} alt={session.data.login} />
 									<div className="flex flex-col">
 										<h2 className="font-bold xl:text-3xl">{session.data.login}</h2>
 										<span className="text-slate-500 select-none">{session.data.role}</span>
 									</div>
-								</div>
+								</Link>
 								<input {...register('raiting', { required: 'Поле обязательно' })} className="w-full rounded-xl mt-3 font-normal" type="number" min={1} max={5} maxLength={1} placeholder="Оцените ночлег от 1 до 5" />
 								<textarea {...register('comment', { required: 'Поле обязательно' })} className="w-full font-normal rounded-xl mt-3" rows={4} placeholder="Опишите детали проживания и качество номеров" />
 								<div className="flex justify-end mt-3">
@@ -110,10 +110,10 @@ export function Reviews() {
 						<div className="flex flex-col gap-6 all-reviews-container mt-6 cursor-pointer">
 							{data.reviews.map((user) => (
 								<div className="card-review border rounded-xl shadow-xl p-10 pb-12 hover:shadow-sm transition-all flex flex-col flex-wrap" key={user.user.id}>
-									<div className="user-info-block flex flex-row items-center gap-5">
+									<Link to={`/user/${user.user.idProfile}`} className="user-info-block flex flex-row items-center gap-5">
 										<img src={user.user.avaImage} alt={user.user.login} />
 										<h2 className="font-bold xl:text-3xl text-xl">{user.user.login}</h2>
-									</div>
+									</Link>
 									<i className="mt-2">Оценка: {user.raiting} звёзд</i>
 									<p>{user.comment}</p>
 									{session.data && session.data._id == user.user.idProfile && (
