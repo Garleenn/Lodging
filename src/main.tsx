@@ -17,6 +17,7 @@ import { Login } from './pages/EnterPage/Login.tsx';
 import { CreateLodging } from './pages/CreateLodging/CreateLodging.tsx';
 import { ChangeProfile } from './pages/ChangeProfile/ChangeProfile.tsx';
 import { Reviews } from './pages/Reviews/Reviews.tsx';
+import { ChangeLodging } from './pages/ChangeLodging/ChangeLodging.tsx';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
   {
     path: "reviews/:id",
     element: <Reviews />
+  },
+  {
+    path: "changeLodging/:id",
+    element: <ChangeLodging />
   },
 ]);
 

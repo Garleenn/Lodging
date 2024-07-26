@@ -96,6 +96,13 @@
 	gap: 10px;
 	flex-wrap: wrap;
 	justify-content: center;
+
+	img {
+		max-width: 150px;
+		max-height: 150px;
+		border-radius: 12px;
+		object-fit: cover;
+	}
 }
 
 .form-create {

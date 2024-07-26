@@ -33,3 +33,31 @@ export const usePostProduct = (product: IProduct) => {
 
 	return { mutate, isError }
 }
+
+export const useChangeProduct = (product: IProduct, id: string) => {
+	const { mutate, isError } = useMutation({
+		mutationKey: ['changeProduct'], 
+		mutationFn: () => getProducts.changeProduct(product, id),
+		onSuccess() {
+			navigate('/');
+		}
+	});
+
+	const navigate = useNavigate();		
+
+	return { mutate, isError }
+}
+
+export const useDeleteProduct = (id: string) => {
+	const { mutate, isError } = useMutation({
+		mutationKey: ['deleteProduct'], 
+		mutationFn: () => getProducts.deleteProduct(id),
+		onSuccess() {
+			navigate('/');
+		}
+	});
+
+	const navigate = useNavigate();		
+
+	return { mutate, isError }
+}

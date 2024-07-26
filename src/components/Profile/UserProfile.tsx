@@ -3,7 +3,7 @@ import { useCheck, useUserInfo } from '../../hooks/useUser';
 import './UserProfile.scss'
 import { MdOutlineMenu } from "react-icons/md";
 import dayjs from 'dayjs'
-import { IIsCreator, IUser } from "../../types/user.interface";
+import { IIsCreator } from "../../types/user.interface";
 import { useEffect, useState } from "react";
 import { Header } from "../Header/Header";
 import { Actions } from "./Actions";
@@ -13,13 +13,13 @@ export function UserProfile() {
 
 	const { data: isCreator } = useCheck<IIsCreator>(id);
 
-	const { error, data } = useUserInfo<IUser>(id);
+	const { error, data } = useUserInfo(id);
 	
 	const createDate = (data: string):string => {
 		return dayjs(data).format('DD.MM.YYYY');
 	}
 
-	let [aboutReplaced, setAboutReplaced] = useState(``);
+	const [aboutReplaced, setAboutReplaced] = useState(``);
 
 	useEffect(() => {
 		if(data && data.about) {

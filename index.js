@@ -153,8 +153,7 @@ app.get('/myProducts', async (req, res) => {
     if(id.length == 24) {
         let user = await User.findOne({_id: id});
         if(user && user.email != ``) {
-            const email = user.email;
-            let data = await Product.find({author: email});
+            let data = await Product.find({authorId: user._id});
             if(data) { 
                 try {
                     res.send(data).status(200);
@@ -172,11 +171,11 @@ app.get('/myProducts', async (req, res) => {
 
 app.post('/products', async (req, res) => {
     const { title, description, price, isHotel, city, phoneNumber, places, images } = req.body;
-    const { login, _id, grade } = await User.findOne({email: req.session.username});
+    const { login, _id } = await User.findOne({email: req.session.username});
 
-    const convertedImages = [];
+    let convertedImages = [];
 
-    if(images.length > 0) {
+    if(images && images.length > 0) {
         for(let i = 0; i < images.length; i++) {
             let avaImage = images[i];
             const base64String = avaImage.replace(/^data:.+;base64,/, '');
@@ -192,41 +191,83 @@ app.post('/products', async (req, res) => {
         }
     }
 
+    if(_id) {
+        const product = new Product({
+            title, description, price, isHotel, city, phoneNumber, places,
+            images: convertedImages,
+            author: login,
+            authorId: _id,
+        });
 
-    const product = new Product({
-        title, description, price, isHotel, city, phoneNumber, places,
-		images: convertedImages,
-        author: login,
-        authorId: _id,
-    });
-
-    try {
-        await product.save();
-        res.sendStatus(201);
-    } catch(err) {
+        try {
+            await product.save();
+            res.sendStatus(201);
+        } catch(err) {
+            res.sendStatus(400);
+            console.log(err);
+        }
+    } else {
         res.sendStatus(400);
-        console.log(err);
     }
 });
 
 app.delete('/products', async (req,res) => {
     const id = req.query.id;
-    
-    try {
-        await Product.deleteOne({_id: id});
-        res.sendStatus(202);
-    } catch {
+
+    const { _id } = await User.findOne({email: req.session.username});
+    const { authorId } = await Product.findOne({_id: id});
+
+    if(_id && authorId && _id == authorId) {
+        try {
+            await Product.deleteOne({_id: id});
+            res.sendStatus(202);
+        } catch {
+            res.sendStatus(400);
+        }
+    } else {
         res.sendStatus(400);
     }
 });
 
 app.put('/products', async (req, res) => {
-    const { id, title, description, price } = req.body;
+    const { id, title, description, price, isHotel, city, phoneNumber, places, images } = req.body;
     let product = await Product.findOne({_id: id});
 
-        product.title = title;
-        product.description = description;
-        product.price = price;
+    const { _id } = await User.findOne({email: req.session.username});
+
+    let convertedImages = [];
+    
+    if(product && _id && _id == product.authorId) {
+
+        if(images && images.length > 0) {
+            for(let i = 0; i < images.length; i++) {
+                let avaImage = images[i];
+                const base64String = avaImage.replace(/^data:.+;base64,/, '');
+                const buffer = Buffer.from(base64String, 'base64');
+                const filePath = path.join(__dirname, 'public', `${_id}_${places}_productUpd${[i]}.png`);
+        
+                try {
+                    await fs.promises.writeFile(filePath, buffer);
+                    convertedImages.push(`http://localhost:3005/${_id}_${places}_productUpd${[i]}.png`);
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        }
+
+        if(_id) {
+            product.title = title;
+            product.description = description;
+            product.price = price;
+            product.isHotel = isHotel, 
+            product.city = city, 
+            product.phoneNumber = phoneNumber, 
+            product.places = places,
+            product.images = convertedImages;
+        }
+    }
+
+
     try {
         await product.save();
         res.sendStatus(201);
@@ -348,7 +389,11 @@ const User = mongoose.model('user', userSchema);
 
 app.get('/users', async (req, res) => {
     let data = await User.find();
-    res.send(data);
+    for(let i = 0; i < data.length; i++) {
+        data[i].email = 'secret, bro)';
+        data[i].password = 'also secret, bro)';
+    }
+    res.send(data).status(200);
 });
 
 app.post('/login', async (req, res) => {

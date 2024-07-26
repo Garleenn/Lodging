@@ -1,12 +1,16 @@
 import { GrFavorite } from 'react-icons/gr'
 import { Link, useParams } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import './Product.scss'
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
-import { useProduct } from '../../hooks/useProducts';
+import { useDeleteProduct, useProduct } from '../../hooks/useProducts';
 import { useAddToCart } from '../../hooks/useCart';
 import { ModalProduct } from '../../components/ProductModal/ModalProduct';
+import { useSession } from '../../hooks/useUser';
+import { IoMenu } from 'react-icons/io5';
+import { IoMdClose } from 'react-icons/io';
+import dayjs from 'dayjs';
 
 export function Product() {
 
@@ -32,7 +36,7 @@ export function Product() {
 		}
 	}, [index]);
 
-	const {mutate} = useAddToCart(id);
+	const { mutate } = useAddToCart(id);
 
 	const addToCart = () => {
 		mutate();
@@ -40,6 +44,24 @@ export function Product() {
 	}
 
 	const [isOpen, setIsOpen] = useState(false);
+
+	const session = useSession();
+
+	const [isOpenMenu, setIsOpenMenu] = useState(false);
+
+	const deleteLodging = useDeleteProduct(id);
+
+	const createDate = (data: string):string => {
+		return dayjs(data).format('DD.MM.YYYY');
+	}
+
+	const [aboutReplaced, setAboutReplaced] = useState(``);
+
+	useEffect(() => {
+		if(data && data.description) {
+			setAboutReplaced(data.description.replace(/\n/g, '<br/>'));
+		} 
+	}, [data]);
 
 
 	return (
@@ -66,22 +88,36 @@ export function Product() {
 									</span>
 								</div>
 							)}
-							<img src={data.images[index]} alt={data.title} />
-							{data&& data.images.length > 1 && (
+							<img className='select-none' src={data.images[index]} alt={data.title} />
+							{data && session.data?._id == data.authorId && (
+								<div className="absolute top-5 left-5">
+									<span>
+										{!isOpenMenu && (<div onClick={() => setIsOpenMenu(true)} className="p-4 cursor-pointer bg-slate-200 rounded-full z-10"><IoMenu className='' size={28} /></div>)}
+									</span>
+									{isOpenMenu && data && (
+										<ul className='bg-slate-100 z-10 p-6 rounded-2xl relative border-2 border-black'>
+											<li className='cursor-pointer absolute top-1 right-1'><IoMdClose size={20} onClick={() => setIsOpenMenu(false)}/></li>
+											<li><Link to={`/changeLodging/${id}`}>Изменить</Link></li>
+											<li onClick={() => deleteLodging.mutate()}><a href="#">Удалить</a></li>
+										</ul>
+									)}
+								</div>
+							)}
+							{data && data.images.length > 1 && (
 								<div className="arrow-right arrow" onClick={sliderRight}>
 									<span>
 										<FaArrowRightLong size={24} />
 									</span>
 								</div>
 							)}
-							<i>Выставленно {data.createdAt}</i>
+							<i>Выставленно {createDate(data.createdAt)}</i>
 							<div className="favourite" onClick={addToCart}>
 								<GrFavorite size={32} className='w-fit' />
 							</div>
 						</div>
 						<div className="info-block flex flex-col gap-2">
 							<h2 className="text-3xl font-bold">{data.title}</h2>
-							<p className="text-slate-500">{data.description}</p>
+							<p className="text-slate-500" dangerouslySetInnerHTML={{__html: aboutReplaced}}></p>
 							<i>Тип: {data.isHotel ? 'Отель'  : 'Частный'}</i>
 							<span>Город: <u>{data.city}</u></span>
 							<Link to={'/user/' + data.authorId}>Создатель: {data.author}</Link>

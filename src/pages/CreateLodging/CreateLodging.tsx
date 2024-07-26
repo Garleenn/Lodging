@@ -27,7 +27,7 @@ export function CreateLodging() {
 		let files = event.target.files;
 		let imagesArray: any[] = [];
 	
-		Array.from(files).forEach(file => {
+		Array.from(files).forEach((file: any) => {
 			const reader = new FileReader();
 			reader.onload = () => {
 				imagesArray.push(reader.result);

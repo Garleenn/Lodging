@@ -57,10 +57,17 @@ export const useUserLogin = (form: IRegister) => {
 }
 
 export const useChangeProfile = (form: IUser) => {
-	return useMutation({
+	const { mutate } = useMutation({
 		mutationKey: ['ChangeProfile'],
-		mutationFn: () => getUser.ChangeProfile(form)
+		mutationFn: () => getUser.ChangeProfile(form),
+		onSuccess() {
+			navigate('/');
+		}
 	});
+
+	const navigate = useNavigate();
+
+	return { mutate }
 }
 
 export const useSession = () => {

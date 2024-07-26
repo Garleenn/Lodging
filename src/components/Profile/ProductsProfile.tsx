@@ -20,12 +20,12 @@ export function ProductsProfile() {
 						{data && (
 							<div className="card-containre flex items-center gap-10 flex-wrap">
 							{data.map((product: IProduct) => (
-								<div className="card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product._id}>
+								<div className="profile-product-card flex flex-col flex-wrap w-1/5 border border-black rounded-xl cursor-pointer" key={product._id}>
 									<div className="image-card select-none">
 										<img className='rounded-t-xl' src={product.images[0]} alt={product.title} />
 									</div>
 									<div className="info-container px-4 py-3 flex flex-col">
-										<h3 className='font-bold text-2xl'>{product.title}</h3>
+										<h3 className='font-bold text-2xl'>{product.title.substring(0, 19)}{product.title.length >= 19 && '...'}</h3>
 										<span>Тип: {product.isHotel ? 'Отель'  : 'Частный'}</span>
 										<span>Город: <u>{product.city}</u></span>
 										<i>Рейтинг: {product.raiting} звёзд</i>

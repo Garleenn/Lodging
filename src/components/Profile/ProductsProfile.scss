@@ -1,3 +1,13 @@
 .wrap {
 	margin: 0 calc(100vw - 90%) !important;
 }
+
+.profile-product-card {
+	position: relative;
+	img {
+	width: 100%;
+	height: 180px;
+	object-fit: cover;
+	border-bottom: 2px solid #000;
+	}
+}

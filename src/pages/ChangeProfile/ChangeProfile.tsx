@@ -9,7 +9,7 @@ export function ChangeProfile() {
 
 	const [profile, setProfile] = useState<IUser>();
 
-	const { mutate } = useChangeProfile<IUser>(profile);
+	const { mutate } = useChangeProfile(profile);
 
 	const submit: SubmitHandler<IUser> = data => {
 		setProfile(data);
@@ -23,10 +23,9 @@ export function ChangeProfile() {
 
 	const convertFileAvatar = (event: Event | any) => {
     let file = event.target.files[0];
-    const reader = new FileReader();
+    const reader: any = new FileReader();
     
     reader.onload = () => {
-      // setProfile((prev: any) => ({ ...prev, avaImage: reader.result }));
 			setValue('avaImage', reader.result)
     };
     

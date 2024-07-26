@@ -38,6 +38,29 @@ class getProducts {
 			images: product.images,
 		});
 	}
+
+	async changeProduct(product: IProduct, id: string) {
+		return axios.put<IProduct>('/products', {
+			id: id,
+			title: product.title,
+			description: product.description,
+			price: product.price,
+			isHotel: product.isHotel,
+			city: product.city,
+			raiting: product.raiting,
+			phoneNumber: product.phoneNumber,
+			places: product.places,
+			images: product.images,
+		});
+	}
+
+	async deleteProduct(id: string) {
+		return axios.delete<IProduct>('/products', {
+			params: {
+				id: id,
+			}
+		});
+	}
 }
 
 export default new getProducts()
