@@ -51,6 +51,13 @@ export function Product() {
 
 	const deleteLodging = useDeleteProduct(id);
 
+	const removeLodging = () => {
+		const isRemove = confirm(`Вы действительно хотите удалить объявление ${data?.title}?`);
+		if(isRemove) {
+			deleteLodging.mutate();
+		}
+	}
+
 	const createDate = (data: string):string => {
 		return dayjs(data).format('DD.MM.YYYY');
 	}
@@ -98,7 +105,7 @@ export function Product() {
 										<ul className='bg-slate-100 z-10 p-6 rounded-2xl relative border-2 border-black'>
 											<li className='cursor-pointer absolute top-1 right-1'><IoMdClose size={20} onClick={() => setIsOpenMenu(false)}/></li>
 											<li><Link to={`/changeLodging/${id}`}>Изменить</Link></li>
-											<li onClick={() => deleteLodging.mutate()}><a href="#">Удалить</a></li>
+											<li onClick={removeLodging}><a href="#">Удалить</a></li>
 										</ul>
 									)}
 								</div>

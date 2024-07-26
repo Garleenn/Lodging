@@ -21,11 +21,6 @@ export function ChangeLodging() {
 
 	const submit: SubmitHandler<IProduct> = async data => {
 		setProduct(data);
-
-		if(startImagesRef.current.style.display != 'none') {
-			setValue('images', data.images);
-			setProduct((prev: any) => { return { ...prev, images: data.images } });
-		}
 		
 		mutate();
 	}

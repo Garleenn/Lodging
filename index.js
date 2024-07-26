@@ -180,11 +180,12 @@ app.post('/products', async (req, res) => {
             let avaImage = images[i];
             const base64String = avaImage.replace(/^data:.+;base64,/, '');
             const buffer = Buffer.from(base64String, 'base64');
-            const filePath = path.join(__dirname, 'public', `${_id}_${places}_product${[i]}.png`);
+            const fileVerse = avaImage.substring("data:image/".length, avaImage.indexOf(";base64"));
+            const filePath = path.join(__dirname, 'public', `${_id}_${places}_product${[i]}.${fileVerse}`);
     
             try {
                 await fs.promises.writeFile(filePath, buffer);
-                convertedImages.push(`http://localhost:3005/${_id}_${places}_product${[i]}.png`);
+                convertedImages.push(`http://localhost:3005/${_id}_${places}_product${[i]}.${fileVerse}`);
             } catch (error) {
                 console.log(error)
             }
@@ -211,21 +212,43 @@ app.post('/products', async (req, res) => {
     }
 });
 
-app.delete('/products', async (req,res) => {
+app.delete('/products', async (req, res) => {
     const id = req.query.id;
 
-    const { _id } = await User.findOne({email: req.session.username});
-    const { authorId } = await Product.findOne({_id: id});
+    try {
+        const user = await User.findOne({ email: req.session.username });
+        const product = await Product.findOne({ _id: id });
 
-    if(_id && authorId && _id == authorId) {
-        try {
-            await Product.deleteOne({_id: id});
-            res.sendStatus(202);
-        } catch {
-            res.sendStatus(400);
+        if (!user || !product) {
+            return res.sendStatus(404);
         }
-    } else {
-        res.sendStatus(400);
+
+        if (user._id.toString() !== product.authorId.toString()) {
+            return res.sendStatus(403);
+        }
+
+        for (let i = 0; i < product.images.length; i++) {
+            let fileName = product.images[i].substring('http://localhost:3005/'.length);
+            const filePath = path.join(__dirname, 'public', fileName);
+        
+            console.log(`Попытка удалить файл: ${filePath}`);
+        
+            try {
+                await fs.promises.access(filePath);
+                await fs.promises.unlink(filePath);
+                console.log(`Файл ${filePath} успешно удален.`);
+            } catch (error) {
+                console.error(`Ошибка при удалении файла ${filePath}:`, error);
+                return res.sendStatus(400);
+            }
+        }
+
+        await Product.deleteOne({ _id: id });
+        res.sendStatus(202);
+
+    } catch (error) {
+        console.error('Ошибка при удалении продукта:', error);
+        res.sendStatus(500);
     }
 });
 
@@ -244,11 +267,12 @@ app.put('/products', async (req, res) => {
                 let avaImage = images[i];
                 const base64String = avaImage.replace(/^data:.+;base64,/, '');
                 const buffer = Buffer.from(base64String, 'base64');
-                const filePath = path.join(__dirname, 'public', `${_id}_${places}_productUpd${[i]}.png`);
+                const fileVerse = avaImage.substring("data:image/".length, avaImage.indexOf(";base64"));
+                const filePath = path.join(__dirname, 'public', `${_id}_${places}_productUpd${[i]}.${fileVerse}`);
         
                 try {
                     await fs.promises.writeFile(filePath, buffer);
-                    convertedImages.push(`http://localhost:3005/${_id}_${places}_productUpd${[i]}.png`);
+                    convertedImages.push(`http://localhost:3005/${_id}_${places}_productUpd${[i]}.${fileVerse}`);
                 } catch (error) {
                     console.log(error)
                 }
@@ -259,11 +283,13 @@ app.put('/products', async (req, res) => {
             product.title = title;
             product.description = description;
             product.price = price;
-            product.isHotel = isHotel, 
-            product.city = city, 
-            product.phoneNumber = phoneNumber, 
-            product.places = places,
-            product.images = convertedImages;
+            product.isHotel = isHotel;
+            product.city = city;
+            product.phoneNumber = phoneNumber;
+            product.places = places;
+            if(convertedImages.length != 0) {
+                product.images = convertedImages;
+            }
         }
     }
 
@@ -539,11 +565,12 @@ app.put('/users', async (req, res) => {
     if(typeof avaImage === 'string') {
         const base64String = avaImage.replace(/^data:.+;base64,/, '');
         const buffer = Buffer.from(base64String, 'base64');
-        const filePath = path.join(__dirname, 'public', `${user._id}.png`);
+        const fileVerse = avaImage.substring("data:image/".length, avaImage.indexOf(";base64"))
+        const filePath = path.join(__dirname, 'public', user._id + `.${fileVerse}`);
 
         try {
             await fs.promises.writeFile(filePath, buffer);
-            user.avaImage = `http://localhost:3005/${user._id}.png`;
+            user.avaImage = `http://localhost:3005/${user._id}.${fileVerse}`;
         } catch (error) {
             console.log(error)
         }
@@ -642,19 +669,18 @@ app.put('/cart-post', async (req, res) => {
     if(user && product) {
         if(user.cart.length > 0) {
             for(let i = 0; i < user.cart.length; i++) {
-                let cartItem = user.cart[i];
-                if(id != cartItem.idProduct) {
-                    user.cart.push(newProduct);
+                let idProduct = user.cart[i].idProduct;
+                if(idProduct !== id && idProduct != newProduct.idProduct) {
+                    console.log(idProduct, id);
+                    user.cart.push(newProduct); 
                 }
-            }
+            };
         } else {
-            user.cart.push(newProduct);
+            user.cart.push(newProduct); 
         }
 
-    
-
         try {
-            await user.save();
+            await user.save(); 
             res.sendStatus(201);
         } catch(e) {
             res.sendStatus(400); 
