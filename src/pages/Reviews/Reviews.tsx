@@ -83,7 +83,7 @@ export function Reviews() {
 								</div>
 							</Link>
 							<div className="flex gap-4 items-center">
-								Ср. оценка: <b>{data.grade}</b>
+								Ср. оценка: <b>{data.grade / data.reviews.length}</b>
 							</div>
 						</div>
 						<hr className="mt-10 border-black" />

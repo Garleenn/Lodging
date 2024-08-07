@@ -11,6 +11,7 @@ import { useSession } from '../../hooks/useUser';
 import { IoMenu } from 'react-icons/io5';
 import { IoMdClose } from 'react-icons/io';
 import dayjs from 'dayjs';
+import { PlacesModal } from '../../components/ProductModal/PlacesModal';
 
 export function Product() {
 
@@ -70,6 +71,8 @@ export function Product() {
 		} 
 	}, [data]);
 
+	const [isChanged, setIsChanged] = useState(false);
+
 
 	return (
 		<>
@@ -78,6 +81,12 @@ export function Product() {
 			<>
 				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
 				<ModalProduct phone={data.phoneNumber} setIsOpen={setIsOpen} />
+			</>
+		)}
+		{isChanged && data && id && (
+			<>
+				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
+				<PlacesModal id={id} places={data.places} setIsChanged={setIsChanged} />
 			</>
 		)}
 			{isLoading ? (
@@ -104,6 +113,7 @@ export function Product() {
 									{isOpenMenu && data && (
 										<ul className='bg-slate-100 z-10 p-6 rounded-2xl relative border-2 border-black'>
 											<li className='cursor-pointer absolute top-1 right-1'><IoMdClose size={20} onClick={() => setIsOpenMenu(false)}/></li>
+											<li onClick={() => setIsChanged(true)}><a href="#">Изменить количество мест</a></li>
 											<li><Link to={`/changeLodging/${id}`}>Изменить</Link></li>
 											<li onClick={removeLodging}><a href="#">Удалить</a></li>
 										</ul>
@@ -129,7 +139,7 @@ export function Product() {
 							<span>Город: <u>{data.city}</u></span>
 							<Link to={'/user/' + data.authorId}>Создатель: {data.author}</Link>
 							<i>Рейтинг: {data.raiting} звёзд</i>
-							<i className='places-count'>Осталось: {data.places} мест</i>
+							<i className='places-count'>Осталось: {data.places} места</i>
 							<span className='text-xl'>Цена: <b>{data.price} руб.</b></span>
 							<div className="bttns flex gap-4">
 								<button role='button' className='w-100 btn mt-2 text-center border border-emerald-500'>Забронировать</button>

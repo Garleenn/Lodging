@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getProducts from '../services/products.service';
 import { IProduct } from "../types/product.interface";
 import { useNavigate } from "react-router-dom";
@@ -57,7 +57,31 @@ export const useDeleteProduct = (id: string) => {
 		}
 	});
 
+
 	const navigate = useNavigate();		
 
 	return { mutate, isError }
+}
+
+
+export const useChangePlaces = (places: number, id: string) => {
+	const { mutate, isError } = useMutation({
+		mutationKey: ['placesChangeProduct'], 
+		mutationFn: () => getProducts.changePlaces(places, id),
+		onSuccess() {
+			QueryClient.invalidateQueries({ queryKey: ['product', id] });
+		}
+	});
+
+	const QueryClient = useQueryClient();
+
+	return { mutate, isError }
+}
+
+export const useGetRatings = (products: IProduct[]) => {
+	return useQuery({
+		queryKey: ['getRatings'], 
+		queryFn: () => getProducts.getRatings(products),
+		select: (data) => data.data
+	});
 }

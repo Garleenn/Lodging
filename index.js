@@ -1,4 +1,3 @@
-// npm i express cors mongoose axios nodemon vue-router dayjs express-session cookie-parser
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -74,8 +73,8 @@ const productSchema = new mongoose.Schema({
     },
 	raiting: {
         type: Number,
-        min: 1,
-        max: 5,
+        // min: 1,
+        // max: 5,
     },
 	images: [String],
 	phoneNumber: {
@@ -171,7 +170,7 @@ app.get('/myProducts', async (req, res) => {
 
 app.post('/products', async (req, res) => {
     const { title, description, price, isHotel, city, phoneNumber, places, images } = req.body;
-    const { login, _id } = await User.findOne({email: req.session.username});
+    const { login, _id, grade } = await User.findOne({email: req.session.username});
 
     let convertedImages = [];
 
@@ -182,7 +181,7 @@ app.post('/products', async (req, res) => {
             const buffer = Buffer.from(base64String, 'base64');
             const fileVerse = avaImage.substring("data:image/".length, avaImage.indexOf(";base64"));
             const filePath = path.join(__dirname, 'public', `${_id}_${places}_product${[i]}.${fileVerse}`);
-    
+        
             try {
                 await fs.promises.writeFile(filePath, buffer);
                 convertedImages.push(`http://localhost:3005/${_id}_${places}_product${[i]}.${fileVerse}`);
@@ -198,6 +197,7 @@ app.post('/products', async (req, res) => {
             images: convertedImages,
             author: login,
             authorId: _id,
+            raiting: grade
         });
 
         try {
@@ -312,6 +312,22 @@ app.get('/product', async (req, res) => {
         res.send(data).status(200);
     } catch {
         res.sendStatus(404);
+    }
+});
+
+app.put('/place-on-product', async (req, res) => {
+    const { id, places } = req.body;
+
+    const product = await Product.findOne({ _id: id });
+
+    product.places = places;
+
+    try {
+        await product.save();
+        res.sendStatus(201);
+    } catch (error) {
+        res.sendStatus(401);
+        console.log(error)
     }
 });
 
@@ -460,11 +476,11 @@ app.get('/user', async (req, res) => {
         res.sendStatus(404);
     }
 
-    if(data && data.reviews.length != 0) {
-        data.reviews.forEach(e => {
-            data.grade += e.raiting / data.reviews.length;
-        });
-    }
+    // if(data && data.reviews.length != 0) {
+    //     data.reviews.forEach(e => {
+    //         data.grade += (e.raiting / data.reviews.length);
+    //     });
+    // }
     
     try {
         res.send(data).status(200);
@@ -590,6 +606,7 @@ app.put('/reviews', async (req, res) => {
     
     let userSession = await User.findOne({email: req.session.username});
     let user = await User.findOne({_id: id});
+    let product = await Product.find({ authorId: id });
     
     if(idProfile != user._id) {
         if(user.email != req.session.username) {
@@ -602,9 +619,16 @@ app.put('/reviews', async (req, res) => {
                 comment: comment,
                 raiting: raiting,
             });
-            
+            user.grade = user.grade + Number(raiting);
+
             try {
                 await user.save();
+
+                product.forEach(async (e) => {
+                    e.raiting = user.grade / user.reviews.length;
+                    await e.save();
+                });
+
                 res.sendStatus(201);
             } catch(e) {
                 res.sendStatus(400);
@@ -620,13 +644,23 @@ app.put('/delete-review', async (req, res) => {
     const { idReview, idProfile } = req.body;
     
     let userReview = await User.findOne({_id: idProfile});
+
+    let userProducts = await Product.find({ authorId: idProfile });
     
     let indexReview = userReview.reviews.findIndex((e) => e._id == idReview);
 
-    userReview.reviews.splice(indexReview, 1)
+    userReview.grade = userReview.grade - Number(userReview.reviews[indexReview].raiting);
+    
+    userReview.reviews.splice(indexReview, 1);
     
     try {
         await userReview.save();
+
+        userProducts.forEach(async (e) => {
+            e.raiting = userReview.grade / userReview.reviews.length;
+            await e.save();
+        });
+
         res.sendStatus(201);
     } catch {
         res.sendStatus(400);

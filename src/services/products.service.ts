@@ -54,10 +54,25 @@ class getProducts {
 		});
 	}
 
+	async changePlaces(places: number, id: string) {
+		return axios.put<IProduct>('/place-on-product', {
+			places: places,
+			id: id,
+		});
+	}
+
 	async deleteProduct(id: string) {
 		return axios.delete<IProduct>('/products', {
 			params: {
 				id: id,
+			}
+		});
+	}
+
+	async getRatings(products: IProduct[]) {
+		return axios.get<number[]>('/ratings', {
+			params: {
+				products: products,
 			}
 		});
 	}

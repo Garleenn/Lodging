@@ -18,11 +18,11 @@ export function Header() {
 	return (
 		<>
 			<div className="header-container flex border-b border-black justify-between py-10 px-16 w-100 items-center gap-8">
-				<div className="">
+				<div className="w-184">
 					<Link to='/'><img className='cursor-pointer' src={'/vite.svg'}></img></Link>
 				</div>
 				<form className='w-100'>
-					<input type="search" placeholder='Найти ночлег'/>
+					<h1><Link to='/' className='font-bold'>всеночлеги.рф</Link></h1>
 				</form>
 				<nav>
 						{data && !isError ? (

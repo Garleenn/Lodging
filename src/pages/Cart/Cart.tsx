@@ -26,7 +26,7 @@ export function Cart() {
 			{!isLoading ? (
 				<div className="cart xl:mx-20 mx-3">
 					<h1 className="font-bold my-6">Избранное: </h1>
-					{data && !error ? (
+					{data && data?.length > 0 && !error ? (
 						<div className="cart-container flex flex-wrap gap-12">
 							{data.map((product: ICart) => (
 								<div className="cart-card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product.idProduct}>
@@ -47,7 +47,9 @@ export function Cart() {
 								</div>
 							))}
 						</div>
-					) : (<h1>Избранных товаров необнаруженно</h1>)}
+					) : (
+					<h2 className="text-2xl text-slate-500">Избранных товаров необнаруженно, но Вы можете их добавить)</h2>
+					) }
 					{error && (<h2>Ошибка, невозможно загрузить избранные товары</h2>)}
 				</div>
 			) : (

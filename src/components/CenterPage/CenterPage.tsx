@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 
 interface IProps {
 	setFilters: (filters: any) => void,
-	refetch: void | any
+	refetch: void | any,
 }
 
 interface IFind {
@@ -33,7 +33,6 @@ export function CenterPage(props: IProps) {
 		});
 
 		props.refetch();
-		console.log(52)
 	}
 	
 
