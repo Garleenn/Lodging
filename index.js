@@ -372,7 +372,8 @@ const userSchema = new mongoose.Schema({
             required: true,
             min: 1,
             max: 5,
-        }
+        },
+        
     }],
     cart: [{
         idProduct: {
@@ -607,10 +608,24 @@ app.put('/reviews', async (req, res) => {
     let userSession = await User.findOne({email: req.session.username});
     let user = await User.findOne({_id: id});
     let product = await Product.find({ authorId: id });
+
+    let newReview;
     
-    if(idProfile != user._id) {
-        if(user.email != req.session.username) {
-            user.reviews.push({
+    if (idProfile != user._id && user.email != req.session.username) {
+        let reviewExists = false;
+        let newReview = null;
+    
+        if (user.reviews.length > 0) {
+            for (let i = 0; i < user.reviews.length; i++) {
+                if (user.reviews[i].user.idProfile == userSession._id) {
+                    reviewExists = true;
+                    break;
+                }
+            }
+        }
+    
+        if (!reviewExists) {
+            newReview = {
                 user: {
                     login: userSession.login,
                     avaImage: userSession.avaImage,
@@ -618,25 +633,30 @@ app.put('/reviews', async (req, res) => {
                 },
                 comment: comment,
                 raiting: raiting,
-            });
-            user.grade = user.grade + Number(raiting);
-
-            try {
+            };
+        } else {
+            return res.status(401).send('Вы уже оставляли отзыв!');
+        }
+    
+        try {
+            if (newReview) {
+                user.reviews.push(newReview);
+                user.grade += Number(raiting);
                 await user.save();
-
-                product.forEach(async (e) => {
+    
+                await Promise.all(product.map(async (e) => {
                     e.raiting = user.grade / user.reviews.length;
                     await e.save();
-                });
-
-                res.sendStatus(201);
-            } catch(e) {
-                res.sendStatus(400);
-                console.log(e);
+                }));
+    
+                return res.sendStatus(201);
             }
-        } else {
-            res.sendStatus(401);
+        } catch (e) {
+            console.error(e);
+            return res.sendStatus(400);
         }
+    } else {
+        return res.sendStatus(401);
     }
 });
 
@@ -655,12 +675,18 @@ app.put('/delete-review', async (req, res) => {
     
     try {
         await userReview.save();
-
-        userProducts.forEach(async (e) => {
-            e.raiting = userReview.grade / userReview.reviews.length;
-            await e.save();
-        });
-
+        
+        if(userReview.reviews.length > 0) {
+            userProducts.forEach(async (e) => {
+                e.raiting = userReview.grade / userReview.reviews.length;
+                await e.save();
+            });
+        } else {
+            userProducts.forEach(async (e) => {
+                e.raiting = 0;
+                await e.save();
+            });
+        }
         res.sendStatus(201);
     } catch {
         res.sendStatus(400);
@@ -681,9 +707,9 @@ app.get('/cart', async (req, res) => {
 app.put('/cart-post', async (req, res) => {
     const { id } = req.body;
 
-    const user = await User.findOne({email: req.session.username});
+    const user = await User.findOne({ email: req.session.username });
 
-    const product = await Product.findOne({_id: id});
+    const product = await Product.findOne({ _id: id });
 
     let newProduct = {
         idProduct: product._id,
@@ -700,28 +726,36 @@ app.put('/cart-post', async (req, res) => {
         authorId: product.authorId,
     }
 
-    if(user && product) {
-        if(user.cart.length > 0) {
-            for(let i = 0; i < user.cart.length; i++) {
+    if (user && product) {
+        if (user.cart.length > 0) {
+            let productExists = false;
+    
+            for (let i = 0; i < user.cart.length; i++) {
                 let idProduct = user.cart[i].idProduct;
-                if(idProduct !== id && idProduct != newProduct.idProduct) {
-                    console.log(idProduct, id);
-                    user.cart.push(newProduct); 
+                if (idProduct === id || idProduct === newProduct.idProduct) {
+                    productExists = true;
+                    break; // Прерываем цикл, если продукт уже в корзине
                 }
-            };
+            }
+    
+            if (!productExists) {
+                user.cart.push(newProduct);
+            } else {
+                return res.sendStatus(401); // Отправляем ответ и выходим из функции
+            }
         } else {
-            user.cart.push(newProduct); 
+            user.cart.push(newProduct);
         }
-
+    
         try {
-            await user.save(); 
-            res.sendStatus(201);
-        } catch(e) {
-            res.sendStatus(400); 
+            await user.save();
+            return res.sendStatus(201); // Отправляем ответ и выходим из функции
+        } catch (e) {
             console.error(e);
+            return res.sendStatus(400); // Отправляем ответ и выходим из функции
         }
     } else {
-        res.sendStatus(404); 
+        return res.sendStatus(404); // Отправляем ответ и выходим из функции
     }
 });
 

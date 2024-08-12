@@ -87,7 +87,7 @@ export const useCheck = (id: string) => {
 }
 
 export const useAddReview = (form: IReviews) => {
-	const { mutate, isError, isSuccess } = useMutation({
+	const { mutate, isError, isSuccess, error } = useMutation({
 		mutationKey: ['addReview'],
 		mutationFn: () => getUser.addReview(form)
 	});
@@ -97,8 +97,8 @@ export const useAddReview = (form: IReviews) => {
 	useEffect(() => {
 		QueryClient.invalidateQueries({queryKey: ['user']});
 	}, [isSuccess, mutate]);
-
-	return { mutate, isError }
+ 
+	return { mutate, isError, error }
 }
 
 export const useRemoveReview = (form: {idReview: string, idProfile: string}) => {

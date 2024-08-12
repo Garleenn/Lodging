@@ -15,13 +15,13 @@ export function Reviews() {
 
 	const { register, handleSubmit, reset } = useForm<IReviews>();
 
-	const { error, data, refetch } = useUserInfo<IUser>(id);
+	const { data, refetch, isLoading } = useUserInfo<IUser>(id);
 
 	const session = useSession();
 
 	const [review, setReview] = useState<IReviews>();
 	
-	const { mutate, isError } = useAddReview<IReviews>({
+	const { mutate, isError, error } = useAddReview<IReviews>({
 		user: {
 			id: id,
 			idProfile: session.data?._id
@@ -31,14 +31,16 @@ export function Reviews() {
 	});
 
 	const submit: SubmitHandler<IReviews> = data => {
-		if(data) {
+		if (data) {
 			setReview(data);
 		}
 
-		mutate();
-		if(!isError) {
-			reset();
-			refetch();
+		try {
+				mutate();
+				reset();
+				refetch();
+		} catch (err) {
+				console.error(err);
 		}
 	}
 
@@ -62,7 +64,6 @@ export function Reviews() {
 			if(!isError || !queryRemoveReview.isPending) {
 				QueryClient.invalidateQueries({queryKey: ['user']});
 				refetch();
-				console.log(52);
 			}
 		}
 	}
@@ -71,7 +72,7 @@ export function Reviews() {
 	return (
 		<>
 			<Header />
-			{data && !(!!error) && (
+			{data && !isLoading && (
 				<div className="review flex flex-col items-center w-100 gap-12 my-10">
 					<div className="info-user-all">
 						<div className="flex flex-row justify-between w-100 gap-5 items-center">
@@ -83,7 +84,7 @@ export function Reviews() {
 								</div>
 							</Link>
 							<div className="flex gap-4 items-center">
-								Ср. оценка: <b>{data.grade / data.reviews.length}</b>
+							Ср. оценка: <b>{data.reviews.length != 0 ? data.grade / data.reviews.length : 0}</b>
 							</div>
 						</div>
 						<hr className="mt-10 border-black" />
@@ -102,6 +103,7 @@ export function Reviews() {
 								<div className="flex justify-end mt-3">
 									<button type="submit">Отправить отзыв</button>
 								</div>
+								{isError && error && (<h2 className="text-red-500">Произошла ошибка! {error.response?.data?.message || error.message}</h2>)}
 							</form>
 						)}
 
@@ -116,6 +118,7 @@ export function Reviews() {
 									</Link>
 									<i className="mt-2">Оценка: {user.raiting} звёзд</i>
 									<p>{user.comment}</p>
+									{/* <i className="absolute bottom-3 left-10">{user.createdAt}</i> */}
 									{session.data && session.data._id == user.user.idProfile && (
 										<div onClick={() => deleteReview(user._id)} className="close-btn"><IoMdClose size={40} /></div>
 									)}

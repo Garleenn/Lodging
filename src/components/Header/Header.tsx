@@ -37,7 +37,7 @@ export function Header() {
 							<CgProfile size={40}/>
 						</Link></li>
 					</ul>
-						) : (<Link to='/login'><button>Войти!</button></Link>)}
+						) : (<Link to='/login'><button className='w-184'>Войти!</button></Link>)}
 				</nav>
 				<MdOutlineMenu onClick={() => setIsOpen(true)} className='burger-btn hidden' size={40}/>
 				{isOpen && data && (<Menu setIsOpen={setIsOpen} idProfile={data._id} />)}

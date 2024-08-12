@@ -20,7 +20,8 @@ export interface IReviews {
 	},
 	comment: string,
 	raiting: number,
-	_id: string
+	_id: string,
+	createdAt: string
 }
 
 export interface ICart {
