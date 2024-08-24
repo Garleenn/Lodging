@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Header } from "../../components/Header/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IUser } from "../../types/user.interface";
 import { useChangeProfile, useUserInfo } from "../../hooks/useUser";
 
@@ -26,11 +26,19 @@ export function ChangeProfile() {
     const reader: any = new FileReader();
     
     reader.onload = () => {
-			setValue('avaImage', reader.result)
+			setValue('avaImage', reader.result);
     };
     
     reader.readAsDataURL(file);
   };
+
+	const [role, setRole] = useState<string>();
+	
+	useEffect(() => {
+		if(data) {
+			setRole(data.role);
+		}
+	}, [data]);
 	
 
 	return (
@@ -45,15 +53,21 @@ export function ChangeProfile() {
 						<label className="mt-5">Изображение профиля</label>
 						<input type="file" onChange={(event) => convertFileAvatar(event)} />
 						<label className="mt-5">О вас</label>
-						<textarea rows={10} { ...register('about', { required: 'Поле обязательно', value: data.about }) }/>
+						<textarea rows={10} { ...register('about', { value: data.about }) }/>
 						<label className="mt-5">Электронная почта</label>
 						<input { ...register('email', { required: 'Поле обязательно', value: data.email }) }/>
 						<label className="mt-5">Ваша роль</label>
-						<select className="w-100" {...register('role', { required: 'Поле обязательно', value: data.role })}>
+						<select className="w-100" {...register('role', { required: 'Поле обязательно', value: data.role })} onChange={(e) => {setRole(e.target.value)} }>
 								<option value="Частник">Частник</option>
 								<option value="Отель">Отель</option>
 								<option value="Турист">Турист</option>
 						</select>
+						{role == 'Отель' && (
+							<>
+								<label>Сколько звёзд у отеля?</label>
+								<input {...register('raiting', {value: data.raiting, min: 0, max: 5})} type="number" placeholder="Введите число от 0 до 5" />
+							</>
+						)}
 					</div>
 					<button type="submit" className="mt-8 w-fit mx-auto">Изменить</button>
 				</form>

@@ -8,7 +8,8 @@ export interface IUser {
 	reviews: IReviews[],
 	cart: ICart[],
 	createdAt: string,
-	grade: number
+	grade: number,
+	raiting?: number
 }
 
 export interface IReviews {

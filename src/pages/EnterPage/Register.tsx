@@ -47,6 +47,8 @@ export function Register() {
 		}
 	}
 
+	const [role, setRole] = useState<string>(``);
+
 
 	return (
 		<>
@@ -59,12 +61,18 @@ export function Register() {
 					<label>Ваш email</label>
 					<input {...register('email', { required: true })} type="email" placeholder="Введите вашу почту" />
 					<label>Ваша роль</label>
-					<select className='select-menu' {...register('role', { required: true })}>
+					<select className='select-menu' {...register('role', { required: true })} onChange={(e) => {setRole(e.target.value)} }>
 						<option value="">Выбирете роль</option>
 						<option value="Отель">Отель</option>
 						<option value="Частник">Частный</option>
 						<option value="Турист">Турист</option>
 					</select>
+					{role == 'Отель' && (
+						<>
+							<label>Сколько звёзд у отеля?</label>
+							<input {...register('raiting', {min: 0, max: 5})} type="number" placeholder="Введите число от 1 до 5" />
+						</>
+					)}
 					<label>Пароль</label>
 					<input {...register('password', { required: true })} type="password" placeholder="Введите пароль" />
 					<label>Повторите пароль</label>

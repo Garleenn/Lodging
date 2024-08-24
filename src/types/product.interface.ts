@@ -12,4 +12,5 @@ export interface IProduct {
 	phoneNumber: string,
 	places: number,
 	createdAt: string,
+	address: string,
 }

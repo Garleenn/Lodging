@@ -1,11 +1,12 @@
-import './Products.scss'
-import { GrFavorite } from 'react-icons/gr'
-import { Link } from 'react-router-dom'
+import './Products.scss';
+import { GrFavorite } from 'react-icons/gr';
+import { Link } from 'react-router-dom';
 import { CenterPage } from '../CenterPage/CenterPage';
 import { IProduct } from '../../types/product.interface';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProducts } from '../../hooks/useProducts';
-import { useAddToCart } from '../../hooks/useCart';
+import { useAddToCart, useRemoveFromCart } from '../../hooks/useCart';
+import { useSession } from '../../hooks/useUser';
 
 export function Products() {
 
@@ -24,11 +25,38 @@ export function Products() {
 
 	const { mutate } = useAddToCart(idProduct);
 
-	const addToCart = (id: string) => {
+	const removeCart = useRemoveFromCart(idProduct);
+
+	const addToCart = (id: string, index: number) => {
+		
 		setIdProduct(id);
 
-		mutate();
+		if(isInCart && isInCart[index] && id) {
+			removeCart.mutate(id);
+		} else {	
+			mutate();
+		}
 	}
+
+	const session = useSession();
+
+	let [isInCart, setInCart] = useState<boolean[]>();
+
+	useEffect(() => {
+		const doCart = () => {
+			if (data && session.data) {
+				const cartStatus = data.map(product => 
+					session.data.cart.some(cartItem => cartItem.idProduct === product._id)
+				);
+	
+				if (JSON.stringify(cartStatus) !== JSON.stringify(isInCart)) {
+					setInCart(cartStatus);
+				}
+			}
+		};
+	
+		doCart();
+	}, [data, session]);
 
 
 	return (
@@ -36,7 +64,7 @@ export function Products() {
 			{data && <CenterPage setFilters={setFilters} refetch={refetch} />}
 			{!isLoading && data ? (
 				<div className="products-container flex items-center justify-center gap-10 flex-wrap">
-					{data.map((product: IProduct) => (
+					{data.map((product: IProduct, index: number) => (
 						<div className="card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product._id}>
 							<div className="image-card select-none">
 								<img className='rounded-t-xl' src={product.images[0]} alt={product.title} />
@@ -53,7 +81,9 @@ export function Products() {
 								)}
 								<span className='text-xl'>Цена: <b>{product.price} руб.</b></span>
 								<Link role='button' className='w-100 btn mt-2 text-center btn-link-bottom' to={'product/' + product._id}>Подробнее</Link>
-								<GrFavorite onClick={() => addToCart(product._id)} size={32} className='w-fit favourite' />
+								{isInCart && (
+									<GrFavorite onClick={() => addToCart(product._id, index)} size={32} className='w-fit favourite' color={!isInCart[index] ? '#000' : 'crimson'} />
+								)}
 							</div>
 						</div>
 					))}

@@ -83,6 +83,8 @@ export function CreateLodging() {
 						</div>
 						<label className="mt-5">Город</label>
 						<input {...register('city')}/>
+						<label className="mt-5">Адрес</label>
+						<input {...register('address')}/>
 						<label className="mt-5">Цена</label>
 						<input type="number" {...register('price')}/>
 						<label className="mt-5">Ваш номер телефона</label>

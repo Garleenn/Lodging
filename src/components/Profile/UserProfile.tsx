@@ -47,7 +47,11 @@ export function UserProfile() {
 								</div>
 							</div>
 							<div className="flex gap-4 items-center">
-								Ср. оценка: <b>{data.reviews.length != 0 ? data.grade / data.reviews.length : 0}</b>
+								{data.role == 'Отель' ? (
+									<span>Звёзд: <b>{data.raiting}</b></span>
+								) : (
+									<span>Ср. оценка: <b>{data.reviews.length != 0 ? data.grade / data.reviews.length : 0}</b></span>
+								)}
 								{isCreator.isCreator == 'you' && (
 									<div className="menu cursor-pointer sm:mt-0 mt-16" onClick={() => setIsOpen(true)}>
 										<MdOutlineMenu size={35}/>

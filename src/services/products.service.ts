@@ -36,6 +36,7 @@ class getProducts {
 			phoneNumber: product.phoneNumber,
 			places: product.places,
 			images: product.images,
+			address: product.address,
 		});
 	}
 
@@ -51,6 +52,7 @@ class getProducts {
 			phoneNumber: product.phoneNumber,
 			places: product.places,
 			images: product.images,
+			address: product.address,
 		});
 	}
 

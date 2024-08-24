@@ -28,6 +28,7 @@ class getUser {
 			email: form.email,
 			password: form.password,
 			role: form.role,
+			raiting: form.raiting,
 		});
 	}
 
@@ -44,7 +45,8 @@ class getUser {
 			email: form.email,
 			role: form.role,
 			avaImage: form.avaImage,
-			about: form.about
+			about: form.about,
+			raiting: form.raiting,
 		});
 	}
 

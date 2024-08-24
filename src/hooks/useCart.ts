@@ -1,6 +1,5 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getCart from '../services/cart.service';
-import { useEffect } from "react";
 
 export const useCart = () => {
 	return useQuery({
@@ -11,23 +10,30 @@ export const useCart = () => {
 }
 
 export const useAddToCart = (id: string) => {
-	return useMutation({
+	const { mutate, isError } = useMutation({
 		mutationKey: ['cart-post'],
 		mutationFn: () => getCart.addToCart(id),
-	});
-}
-
-export const useRemoveFromCart = (id: string) => {
-	const { mutate, isError, isSuccess } = useMutation({
-		mutationKey: ['cart-delete'],
-		mutationFn: () => getCart.removeFromCart(id),
+		onSuccess() {
+			QueryClient.invalidateQueries({queryKey: ['userSession']});
+		}
 	});
 
 	const QueryClient = useQueryClient();
 
-	useEffect(() => {
-		QueryClient.invalidateQueries({queryKey: ['cart']});
-	}, [isSuccess, mutate]);
+	return { mutate, isError };
+}
+
+export const useRemoveFromCart = (id: string) => {
+	const { mutate, isError } = useMutation({
+		mutationKey: ['cart-delete'],
+		mutationFn: () => getCart.removeFromCart(id),
+		onSuccess() {
+			QueryClient.invalidateQueries({queryKey: ['cart']});
+			QueryClient.invalidateQueries({queryKey: ['userSession']});
+		}
+	});
+
+	const QueryClient = useQueryClient();
 
 	return { mutate, isError }
 }

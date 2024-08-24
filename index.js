@@ -89,7 +89,11 @@ const productSchema = new mongoose.Schema({
     authorId: {
         type: String,
         required: true,
-    } 
+    },
+    address: {
+        type: String,
+        required: true,
+    }
 }, {
     timestamps: true,
 });
@@ -169,8 +173,8 @@ app.get('/myProducts', async (req, res) => {
 });
 
 app.post('/products', async (req, res) => {
-    const { title, description, price, isHotel, city, phoneNumber, places, images } = req.body;
-    const { login, _id, grade } = await User.findOne({email: req.session.username});
+    const { title, description, price, isHotel, city, phoneNumber, places, images, address } = req.body;
+    const { login, _id, grade, raiting } = await User.findOne({email: req.session.username});
 
     let convertedImages = [];
 
@@ -191,13 +195,21 @@ app.post('/products', async (req, res) => {
         }
     }
 
+    let ratin;
+
+    if(isHotel) {
+        ratin = raiting;
+    } else {
+        ratin = grade;
+    }
+
     if(_id) {
         const product = new Product({
-            title, description, price, isHotel, city, phoneNumber, places,
+            title, description, price, isHotel, city, phoneNumber, places, address,
             images: convertedImages,
             author: login,
             authorId: _id,
-            raiting: grade
+            raiting: ratin
         });
 
         try {
@@ -253,7 +265,7 @@ app.delete('/products', async (req, res) => {
 });
 
 app.put('/products', async (req, res) => {
-    const { id, title, description, price, isHotel, city, phoneNumber, places, images } = req.body;
+    const { id, title, description, price, isHotel, city, phoneNumber, places, images, address } = req.body;
     let product = await Product.findOne({_id: id});
 
     const { _id } = await User.findOne({email: req.session.username});
@@ -287,6 +299,7 @@ app.put('/products', async (req, res) => {
             product.city = city;
             product.phoneNumber = phoneNumber;
             product.places = places;
+            product.address = address
             if(convertedImages.length != 0) {
                 product.images = convertedImages;
             }
@@ -424,6 +437,11 @@ const userSchema = new mongoose.Schema({
             required: false,
         },
     }],
+    raiting: {
+        type: Number,
+        min: 0,
+        max: 5,
+    },
 }, {
     timestamps: true
 });
@@ -492,7 +510,12 @@ app.get('/user', async (req, res) => {
 });
 
 app.post('/users', async(req, res) => {
-    const { login, email, password, role } = req.body;
+    const { login, email, password, role, raiting } = req.body;
+
+    let raitingIsHotel;
+    if(role == 'Отель') {
+        raitingIsHotel = raiting;
+    }
     
     const newUser = new User({
         login: login,
@@ -502,9 +525,10 @@ app.post('/users', async(req, res) => {
         role: role,
         reviews: [], 
         cart: [],
-        grade: 0
+        grade: 0,
+        raiting: raitingIsHotel,
     });
-    
+     
     try {
         await newUser.save();
         req.session.username = email;
@@ -571,7 +595,7 @@ app.post('/logout', async (req, res) => {
 });
 
 app.put('/users', async (req, res) => {
-    const { login, email, role, about, avaImage } = req.body;
+    const { login, email, role, about, avaImage, raiting } = req.body;
     
     let user = await User.findOne({email: req.session.username});
     
@@ -579,6 +603,7 @@ app.put('/users', async (req, res) => {
     user.email = email;
     user.role = role;
     user.about = about;
+    user.raiting = raiting;
     if(typeof avaImage === 'string') {
         const base64String = avaImage.replace(/^data:.+;base64,/, '');
         const buffer = Buffer.from(base64String, 'base64');
@@ -644,9 +669,11 @@ app.put('/reviews', async (req, res) => {
                 user.grade += Number(raiting);
                 await user.save();
     
-                await Promise.all(product.map(async (e) => {
+                await Promise.all(product.map(async (e) => { 
                     e.raiting = user.grade / user.reviews.length;
-                    await e.save();
+                    if(!e.isHotel) {
+                        await e.save();
+                    }
                 }));
     
                 return res.sendStatus(201);
@@ -678,13 +705,17 @@ app.put('/delete-review', async (req, res) => {
         
         if(userReview.reviews.length > 0) {
             userProducts.forEach(async (e) => {
-                e.raiting = userReview.grade / userReview.reviews.length;
-                await e.save();
+                if(!e.isHotel) {
+                    e.raiting = userReview.grade / userReview.reviews.length;
+                    await e.save();
+                }
             });
         } else {
             userProducts.forEach(async (e) => {
-                e.raiting = 0;
-                await e.save();
+                if(!e.isHotel) {
+                    e.raiting = 0;
+                    await e.save();
+                }
             });
         }
         res.sendStatus(201);

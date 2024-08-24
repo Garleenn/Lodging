@@ -5,19 +5,21 @@ import { useCallback, useEffect, useState } from "react";
 import './Product.scss'
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
 import { useDeleteProduct, useProduct } from '../../hooks/useProducts';
-import { useAddToCart } from '../../hooks/useCart';
+import { useAddToCart, useRemoveFromCart } from '../../hooks/useCart';
 import { ModalProduct } from '../../components/ProductModal/ModalProduct';
 import { useSession } from '../../hooks/useUser';
 import { IoMenu } from 'react-icons/io5';
 import { IoMdClose } from 'react-icons/io';
 import dayjs from 'dayjs';
 import { PlacesModal } from '../../components/ProductModal/PlacesModal';
+import { ICart } from '../../types/user.interface';
+import { ModalAddress } from '../../components/ProductModal/ModalAddress';
 
 export function Product() {
 
 	const { id } = useParams<string>();
 
-	const { isLoading, error, data, refetch } = useProduct(id);
+	const { isLoading, error, data } = useProduct(id);
 
 	const [index, setIndex] = useState<number>(0);
 
@@ -39,9 +41,17 @@ export function Product() {
 
 	const { mutate } = useAddToCart(id);
 
+	const removeCart = useRemoveFromCart(id);
+
 	const addToCart = () => {
-		mutate();
-		refetch();
+		if(!isInCart) {
+			mutate();
+			// refetch();
+		} else {
+			removeCart.mutate();
+			session.refetch();
+			// setIsInCart(false);
+		}
 	}
 
 	const [isOpen, setIsOpen] = useState(false);
@@ -53,9 +63,10 @@ export function Product() {
 	const deleteLodging = useDeleteProduct(id);
 
 	const removeLodging = () => {
-		const isRemove = confirm(`Вы действительно хотите удалить объявление ${data?.title}?`);
+		const isRemove = confirm(`Вы действительно хотите удалить объявление "${data?.title}?"`);
 		if(isRemove) {
 			deleteLodging.mutate();
+			setIsInCart(false);
 		}
 	}
 
@@ -71,7 +82,27 @@ export function Product() {
 		} 
 	}, [data]);
 
+	useEffect(() => {
+		const doCart = () => {
+			if(session.data) {
+				session.data.cart.forEach((e: ICart) => {
+					if(id == e.idProduct) {
+						setIsInCart(true);
+					} else {
+						setIsInCart(false);
+					}
+				})
+			}
+		}
+
+		doCart();
+	}, [session]);
+
 	const [isChanged, setIsChanged] = useState(false);
+
+	const [isInCart, setIsInCart] = useState<boolean>();
+
+	const [isAddress, setIsAddress] = useState(false);
 
 
 	return (
@@ -81,6 +112,12 @@ export function Product() {
 			<>
 				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
 				<ModalProduct phone={data.phoneNumber} setIsOpen={setIsOpen} />
+			</>
+		)}
+		{isAddress && data && (
+			<>
+				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
+				<ModalAddress address={data.address} setIsAddress={setIsAddress} />
 			</>
 		)}
 		{isChanged && data && id && (
@@ -127,10 +164,12 @@ export function Product() {
 									</span>
 								</div>
 							)}
-							<i>Выставленно {createDate(data.createdAt)}</i>
-							<div className="favourite" onClick={addToCart}>
-								<GrFavorite size={32} className='w-fit' />
-							</div>
+							<i className='select-none'>Выставленно {createDate(data.createdAt)}</i>
+							{session.data && !session.isError && (
+								<div className="favourite" onClick={addToCart}>
+										<GrFavorite size={32} className='w-fit' color={isInCart ? 'crimson' : '#000'} />
+								</div>
+							)}
 						</div>
 						<div className="info-block flex flex-col gap-2">
 							<h2 className="text-3xl font-bold">{data.title}</h2>
@@ -138,11 +177,11 @@ export function Product() {
 							<i>Тип: {data.isHotel ? 'Отель'  : 'Частный'}</i>
 							<span>Город: <u>{data.city}</u></span>
 							<Link to={'/user/' + data.authorId}>Создатель: {data.author}</Link>
-							<i>Рейтинг: {data.raiting} звёзд</i>
+							<i>{data.isHotel ? 'Рейтинг' : 'Средняя оценка'}: {data.raiting} звёзд</i>
 							<i className='places-count'>Осталось: {data.places} места</i>
 							<span className='text-xl'>Цена: <b>{data.price} руб.</b></span>
 							<div className="bttns flex gap-4">
-								<button role='button' className='w-100 btn mt-2 text-center border border-emerald-500'>Забронировать</button>
+								<button role='button' className='w-100 btn mt-2 text-center border border-emerald-500' onClick={() => setIsAddress(true)}>Узнать адрес</button>
 								<button role='button' className='w-100 btn mt-2 text-center' onClick={() => setIsOpen(true)}>Узнать телефон</button>
 							</div>
 						</div>
