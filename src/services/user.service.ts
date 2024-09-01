@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IIsCreator, IRegister, IReviews, IUser } from "../types/user.interface";
+import { IErrorRequests, IIsCreator, IRegister, IReviews, IUser } from "../types/user.interface";
 import { IProduct } from "../types/product.interface";
 axios.defaults.baseURL = 'http://localhost:3005'
 axios.defaults.withCredentials = true
@@ -79,6 +79,13 @@ class getUser {
 		return axios.put<IReviews>('/delete-review', {
 			idReview: form.idReview,
 			idProfile: form.idProfile,
+		});
+	}
+
+	async sendError(title: string, message: string) {
+		return axios.post<IErrorRequests>('/requests-erorrs', {
+			title,
+			message
 		});
 	}
 }

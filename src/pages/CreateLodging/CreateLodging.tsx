@@ -15,7 +15,6 @@ export function CreateLodging() {
 
 	const submit: SubmitHandler<IProduct> = data => {
 		setProduct(data);
-		console.log(data);
 		
 		if(data) {
 			mutate();

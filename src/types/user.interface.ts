@@ -47,3 +47,10 @@ export interface IRegister extends IUser {
 export interface IIsCreator {
 	isCreator: string
 }
+
+export interface IErrorRequests {
+	id?: string,
+	idUser?: string,
+	title: string | any,
+	message: string | any,
+}

@@ -132,3 +132,18 @@ export const useLogOut = () => {
 
 	return { mutate }
 }
+
+export const useSendError = (title: string, message: string) => {
+	const { mutate } = useMutation({
+		mutationKey: ['errors'],
+		mutationFn: () => getUser.sendError(title, message),
+		onSuccess() {
+			alert(`Жалоба/предложение ${title} отправлена!`)
+			navigate('/');
+		},
+	});
+
+	const navigate = useNavigate();
+
+	return { mutate }
+}

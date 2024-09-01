@@ -765,14 +765,14 @@ app.put('/cart-post', async (req, res) => {
                 let idProduct = user.cart[i].idProduct;
                 if (idProduct === id || idProduct === newProduct.idProduct) {
                     productExists = true;
-                    break; // Прерываем цикл, если продукт уже в корзине
+                    break;
                 }
             }
     
             if (!productExists) {
                 user.cart.push(newProduct);
             } else {
-                return res.sendStatus(401); // Отправляем ответ и выходим из функции
+                return res.sendStatus(401);
             }
         } else {
             user.cart.push(newProduct);
@@ -780,13 +780,13 @@ app.put('/cart-post', async (req, res) => {
     
         try {
             await user.save();
-            return res.sendStatus(201); // Отправляем ответ и выходим из функции
+            return res.sendStatus(201);
         } catch (e) {
             console.error(e);
-            return res.sendStatus(400); // Отправляем ответ и выходим из функции
+            return res.sendStatus(400);
         }
     } else {
-        return res.sendStatus(404); // Отправляем ответ и выходим из функции
+        return res.sendStatus(404);
     }
 });
 
@@ -812,5 +812,48 @@ app.get('/in-session', async (req, res) => {
         res.send(true).status(200);
     } else {
         res.send(false).status(400);
+    }
+});
+
+
+
+const requestsShema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+    },
+    message: {
+        type: String,
+        required: true,
+    },
+    idUser: {
+        type: String,
+        required: true,
+    }
+});
+
+const Request = new mongoose.model('request', requestsShema)
+
+app.post('/requests-erorrs', async (req, res) => {
+    let {title, message} = req.body;
+    
+    if(req.session.username && title && message) {
+        const { _id } = await User.findOne({ email: req.session.username });
+
+        let newRequest = new Request({
+            title, 
+            message, 
+            idUser: _id
+        });
+
+        try {
+            await newRequest.save();
+            res.sendStatus(201);
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(400);
+        }
+    } else {
+        res.sendStatus(400);
     }
 });

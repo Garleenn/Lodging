@@ -20,6 +20,7 @@ import { Reviews } from './pages/Reviews/Reviews.tsx';
 import { ChangeLodging } from './pages/ChangeLodging/ChangeLodging.tsx';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Errors } from './pages/Errrors/Errors.tsx';
 
 const queryClient = new QueryClient()
 
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: "changeLodging/:id",
     element: <ChangeLodging />
+  },
+  {
+    path: "errors",
+    element: <Errors />
   },
 ]);
 
