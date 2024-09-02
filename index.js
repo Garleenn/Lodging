@@ -6,6 +6,7 @@ const session = require('express-session');
 const cookieParser = require("cookie-parser");
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 let corsOptions = {
     origin: 'http://localhost:5173',
@@ -461,7 +462,7 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const data = await User.findOne({email: email});
     if(data) {
-        if(data.password == password) {
+        if(await bcrypt.compare(password, data.password)) {
             try {
                 req.session.username = email;
                 res.sendStatus(200); 
@@ -516,11 +517,15 @@ app.post('/users', async(req, res) => {
     if(role == 'Отель') {
         raitingIsHotel = raiting;
     }
+
+    const salt = bcrypt.genSaltSync(10);
+
+    const hashPassword = bcrypt.hashSync(password, salt);
     
     const newUser = new User({
         login: login,
         email: email,
-        password: password,
+        password: hashPassword,
         avaImage: "https://yt3.googleusercontent.com/ytc/AIf8zZTOqVAj1luCxSiohOyyV5yKwi0DDFy6PruvGoCEeg=s900-c-k-c0x00ffffff-no-rj",
         role: role,
         reviews: [], 
@@ -814,7 +819,6 @@ app.get('/in-session', async (req, res) => {
         res.send(false).status(400);
     }
 });
-
 
 
 const requestsShema = new mongoose.Schema({
