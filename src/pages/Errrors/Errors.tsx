@@ -3,6 +3,7 @@ import { Header } from "../../components/Header/Header";
 import { IErrorRequests } from "../../types/user.interface";
 import { useSendError } from "../../hooks/useUser";
 import { useState } from "react";
+import { Footer } from "../../components/Footer/Footer";
 
 
 export function Errors() {
@@ -25,7 +26,7 @@ export function Errors() {
 	return (
 		<>
 		<Header />
-			<form onSubmit={handleSubmit(submit)} className="errors-container flex flex-col items-center p-20 border-2 border-black rounded-2xl shadow-xl xl:mx-40 mx-5 mt-8">
+			<form onSubmit={handleSubmit(submit)} className="errors-container flex flex-col items-center p-20 border-2 border-black rounded-2xl shadow-xl xl:mx-40 mx-5 mt-8 size">
 				<h1 className="font-bold">Напишите нам вашу жалобу/предложение</h1>
 				<div className="flex flex-col items-start">
 					<label className="mt-5">Краткое название проблемы</label>
@@ -35,6 +36,7 @@ export function Errors() {
 				</div>
 				<button className="mt-10" type="submit">Отправить!</button>
 			</form>
+			<Footer />
 		</>
 	)
 }

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import './Cart.scss'
 import { ICart } from "../../types/user.interface";
 import { useState } from "react";
+import { Footer } from "../../components/Footer/Footer";
 
 export function Cart() {
 
@@ -24,7 +25,7 @@ export function Cart() {
 		<>
 			<Header />
 			{!isLoading ? (
-				<div className="cart xl:mx-20 mx-5">
+				<div className="cart xl:mx-20 mx-5 size">
 					<h1 className="font-bold my-6">Избранное: </h1>
 					{data && data?.length > 0 && !error ? (
 						<div className="cart-container flex flex-wrap gap-12">
@@ -55,6 +56,7 @@ export function Cart() {
 			) : (
 				<h1>Загрузка</h1>
 			)}
+			<Footer />
 		</>
 	)
 }

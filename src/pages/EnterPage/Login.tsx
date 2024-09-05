@@ -5,6 +5,7 @@ import { IRegister } from "../../types/user.interface";
 import { useUserLogin } from "../../hooks/useUser";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
+import { Footer } from '../../components/Footer/Footer';
 
 export function Login() {
 
@@ -36,7 +37,7 @@ export function Login() {
 	return (
 		<>
 			<Header />
-			<form onSubmit={handleSubmit(login)} className="login-container flex flex-col items-center my-16 mx-40 border border-black rounded-2xl shadow-xl p-16">
+			<form onSubmit={handleSubmit(login)} className="login-container flex flex-col items-center my-16 mx-40 border border-black rounded-2xl shadow-xl p-16 size">
 				<h1 className="font-bold mb-5">Вход</h1>
 				<div className="flex flex-col items-start">
 					<label>Ваш email</label>
@@ -50,6 +51,7 @@ export function Login() {
 				{err && (<h3 className="text-red-500 font-bold text-xl mt-5">{err}</h3>)}
 				<Link className='mt-8' to='/register'>Ещё нет аккаунта? Зарегестрируйтесь!</Link>
 			</form>
+			<Footer />
 		</>
 	)
 }

@@ -55,7 +55,7 @@ export function ProductsProfile() {
 				{!isLoading ? (
 					<div className="prod flex flex-col w-100 gap-4 my-3">
 						<h2 className="font-bold text-3xl">Обьявления: </h2>
-						{data && (
+						{data && data.length ? (
 							<div className="card-containre flex items-center gap-10 flex-wrap">
 								{data.map((product: IProduct, index: number) => (
 									<div className="profile-product-card flex flex-col flex-wrap w-full xl:w-1/5 border border-black rounded-xl cursor-pointer" key={product._id}>
@@ -77,6 +77,8 @@ export function ProductsProfile() {
 								))}
 								{error && (<h1>Ошибка! Невозможно подгрузить ночлеги!</h1>)}
 							</div>
+						) : (
+							<h2 className='text-xl dont-prod text-slate-500'>У пользователя нет объявлений(</h2>
 						)}
 					</div>
 				) : (

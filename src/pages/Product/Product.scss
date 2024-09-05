@@ -1,12 +1,14 @@
 .image-container {
 	position: relative;
-	// background-color: rgba(0,0,0,0.4);
 
 	img {
 		max-width: 650px;
 		max-height: 650px;
 		border-radius: 15px;
 	}
+
+	max-width: 650px;
+	max-height: 650px;
 }
 
 .favourite {
@@ -62,7 +64,7 @@
 	padding: 15px;
 	font-weight: bold;
 	cursor: pointer;
-	top: calc(100% - 55%);
+	top: calc(100% - 75%);
 	position: absolute;
 }
 

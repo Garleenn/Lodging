@@ -43,10 +43,12 @@ nav ul li .header-link {
 	display: flex;
 }
 
-.w-184 {
-	width: 184px;
+@media (min-width: 1224px) {
+	.w-184 {
+		width: 184px;
+	}
 }
 
-// .w-100 h1 {
-// 	color: #646cff;
-// }
+.header-container {
+	border-bottom: #646cff 3.25px solid;
+}

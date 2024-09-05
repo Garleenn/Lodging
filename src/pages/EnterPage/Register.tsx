@@ -5,6 +5,7 @@ import { IRegister } from "../../types/user.interface";
 import { useRegister } from "../../hooks/useUser";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
+import { Footer } from '../../components/Footer/Footer';
 
 export function Register() {
 
@@ -53,7 +54,7 @@ export function Register() {
 	return (
 		<>
 			<Header />
-			<form onSubmit={handleSubmit(submit, validError)} className="log-container flex flex-col items-center my-16 mx-40 border border-black rounded-2xl shadow-xl p-16">
+			<form onSubmit={handleSubmit(submit, validError)} className="log-container flex flex-col items-center my-16 mx-40 border border-black rounded-2xl shadow-xl p-16 size">
 				<h1 className="font-bold mb-5">Регистрация</h1>
 				<div className="flex flex-col items-start">
 					<label>Имя</label>
@@ -82,6 +83,7 @@ export function Register() {
 				{err && (<h3 className="text-red-500 font-bold text-xl mt-5">{err}</h3>)}
 				<Link className='mt-8' to='/login'>Уже есть аккаунт? Войдите!</Link>
 			</form>
+			<Footer />
 		</>
 	)
 }

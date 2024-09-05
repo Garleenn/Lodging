@@ -17,8 +17,8 @@ export function Header() {
 
 	return (
 		<>
-			<div className="header-container flex border-b border-black justify-between py-10 px-16 w-100 items-center gap-8">
-				<div className="xl:w-184">
+			<div className="header-container flex border-b -black justify-between py-10 px-16 w-100 items-center gap-8">
+				<div className="w-184">
 					<Link to='/'><img className='cursor-pointer' src={'/vite.svg'}></img></Link>
 				</div>
 				<h2 className='w-100 header-title text-3xl xl:text-5xl text-center'><Link to='/' className='font-bold'>всеночлеги.рф</Link></h2>

@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import { PlacesModal } from '../../components/ProductModal/PlacesModal';
 import { ICart } from '../../types/user.interface';
 import { ModalAddress } from '../../components/ProductModal/ModalAddress';
+import { Footer } from '../../components/Footer/Footer';
 
 export function Product() {
 
@@ -131,7 +132,7 @@ export function Product() {
 						<h1 className='text-center'>Загрузка...</h1>
 					</div>
 		) : (
-				<div className="product-container flex justify-center mx-48 my-12">
+				<div className="size product-container flex justify-center mx-48 my-12">
 					{data && !error ? (<div className="product-info flex flex-row gap-12">
 						<div className="image-container flex flex-col">
 							{data && data.images.length > 1 && (
@@ -190,6 +191,7 @@ export function Product() {
 					)}
 				</div>
 			)}
+			<Footer />
 		</>
 	)
 }

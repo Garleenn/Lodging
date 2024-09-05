@@ -4,6 +4,7 @@ import { Header } from "../../components/Header/Header";
 import { IProduct } from "../../types/product.interface";
 import { usePostProduct } from "../../hooks/useProducts";
 import { useState } from "react";
+import { Footer } from '../../components/Footer/Footer';
 
 export function CreateLodging() {
 
@@ -60,7 +61,7 @@ export function CreateLodging() {
 	return (
 		<>
 			<Header />
-			<div className="main flex justify-center">
+			<div className="main flex justify-center size">
 				<form onSubmit={handleSubmit(submit)} className="form-create flex flex-col items-center border border-black rounded-2xl xl:p-16 p-5 my-10 mx-6">
 					<h2 className="text-3xl font-bold text-center">Создать объявление</h2>
 					<div className="inputs flex flex-col">
@@ -94,6 +95,7 @@ export function CreateLodging() {
 					<button type="submit" className="mt-8 w-fit mx-auto">Создать объявление</button>
 				</form>
 			</div>
+			<Footer />
 		</>
 	)
 }

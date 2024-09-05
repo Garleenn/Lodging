@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { useAddToCart, useRemoveFromCart } from '../../hooks/useCart';
 import { useSession } from '../../hooks/useUser';
+import { Footer } from '../Footer/Footer';
 
 export function Products() {
 

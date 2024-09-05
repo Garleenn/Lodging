@@ -5,6 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { IProduct } from "../../types/product.interface";
 import { useRef, useState } from "react";
 import { useSession } from "../../hooks/useUser";
+import { Footer } from "../../components/Footer/Footer";
 
 
 export function ChangeLodging() {
@@ -67,7 +68,7 @@ export function ChangeLodging() {
 	return (
 		<>
 			<Header />
-			<div className="main flex justify-center">
+			<div className="main flex justify-center size">
 				{session.data && data && !isError && session.data._id == data.authorId && (
 					<form onSubmit={handleSubmit(submit)} className="form-create flex flex-col items-center border border-black rounded-2xl xl:p-16 p-5 my-10 mx-6">
 						<h2 className="text-3xl font-bold text-center">Создать объявление</h2>
@@ -106,6 +107,7 @@ export function ChangeLodging() {
 					</form>
 				)}
 			</div>
+			<Footer />
 		</>
 	)
 }

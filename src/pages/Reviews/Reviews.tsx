@@ -7,6 +7,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useQueryClient } from "@tanstack/react-query";
+import { Footer } from "../../components/Footer/Footer";
 
 
 export function Reviews() {
@@ -73,7 +74,7 @@ export function Reviews() {
 		<>
 			<Header />
 			{data && !isLoading && (
-				<div className="review flex flex-col items-center w-100 gap-12 my-10">
+				<div className="review flex flex-col items-center w-100 gap-12 my-10 size">
 					<div className="info-user-all">
 						<div className="main-review flex flex-row justify-between w-100 gap-5 items-center">
 							<Link to={`/user/${data._id}`} className="profile-info flex items-center gap-4">
@@ -128,6 +129,7 @@ export function Reviews() {
 					</div>
 				</div>
 			)}
+			<Footer />
 		</>
 	)
 }
