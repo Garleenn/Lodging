@@ -45,7 +45,7 @@ export function ChangeProfile() {
 		<>
 			<Header />
       {!isLoading && !isError && data && (
-				<form onSubmit={handleSubmit(submit)} className="flex flex-col items-center border border-black rounded-2xl xl:p-16 p-5 my-10 xl:mx-60 mx-6">
+				<form onSubmit={handleSubmit(submit)} className="flex flex-col items-center border border-black rounded-2xl xl:p-16 p-5 my-10 xl:mx-60 mx-0">
 					<h2 className="text-3xl font-bold text-center">Изменить профиль</h2>
 					<div className="inputs flex flex-col">
 						<label className="mt-5">Ваш логин</label>

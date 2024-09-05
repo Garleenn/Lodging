@@ -24,12 +24,12 @@ export function Cart() {
 		<>
 			<Header />
 			{!isLoading ? (
-				<div className="cart xl:mx-20 mx-3">
+				<div className="cart xl:mx-20 mx-5">
 					<h1 className="font-bold my-6">Избранное: </h1>
 					{data && data?.length > 0 && !error ? (
 						<div className="cart-container flex flex-wrap gap-12">
 							{data.map((product: ICart) => (
-								<div className="cart-card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product.idProduct}>
+								<div className="cart-card flex flex-col flex-wrap xl:w-1/6 w-full border border-black rounded-xl cursor-pointer" key={product.idProduct}>
 									<div className="image-card select-none">
 										<img className='rounded-t-xl' src={product.images[0]} alt={product.title} />
 									</div>

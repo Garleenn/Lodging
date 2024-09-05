@@ -75,7 +75,7 @@ export function Reviews() {
 			{data && !isLoading && (
 				<div className="review flex flex-col items-center w-100 gap-12 my-10">
 					<div className="info-user-all">
-						<div className="flex flex-row justify-between w-100 gap-5 items-center">
+						<div className="main-review flex flex-row justify-between w-100 gap-5 items-center">
 							<Link to={`/user/${data._id}`} className="profile-info flex items-center gap-4">
 								<img src={data.avaImage} alt={data.login} />
 								<div className="flex flex-col">
@@ -83,7 +83,7 @@ export function Reviews() {
 									<span className="text-slate-500 select-none">{data.role}</span>
 								</div>
 							</Link>
-							<div className="flex gap-4 items-center">
+							<div className="grade-top flex gap-4 items-center">
 							Ср. оценка: <b>{data.reviews.length != 0 ? data.grade / data.reviews.length : 0}</b>
 							</div>
 						</div>

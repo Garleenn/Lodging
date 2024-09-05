@@ -14,17 +14,17 @@ export function UserProfile() {
 	const { data: isCreator } = useCheck<IIsCreator>(id);
 
 	const { error, data } = useUserInfo(id);
-	
-	const createDate = (data: string):string => {
+
+	const createDate = (data: string): string => {
 		return dayjs(data).format('DD.MM.YYYY');
 	}
 
 	const [aboutReplaced, setAboutReplaced] = useState(``);
 
 	useEffect(() => {
-		if(data && data.about) {
+		if (data && data.about) {
 			setAboutReplaced(data.about.replace(/\n/g, '<br/>'));
-		} 
+		}
 	}, [data]);
 
 
@@ -38,7 +38,7 @@ export function UserProfile() {
 			<div className="flex flex-col items-center w-100 gap-12 my-10">
 				{!error && data && isCreator ? (
 					<div className="info-user-all">
-						<div className="flex flex-row justify-between w-100 gap-5 items-center">
+						<div className="main-info flex flex-row justify-between w-100 gap-5 items-center">
 							<div className="profile-info flex items-center gap-4">
 								<img src={data.avaImage} alt={data.login} />
 								<div className="flex flex-col">
@@ -46,15 +46,16 @@ export function UserProfile() {
 									<span className="text-slate-500 select-none">{data.role}</span>
 								</div>
 							</div>
-							<div className="flex gap-4 items-center">
+							<div className="right-block-profile flex gap-4 items-center">
 								{data.role == 'Отель' ? (
 									<span>Звёзд: <b>{data.raiting}</b></span>
 								) : (
 									<span>Ср. оценка: <b>{data.reviews.length != 0 ? data.grade / data.reviews.length : 0}</b></span>
 								)}
+
 								{isCreator.isCreator == 'you' && (
-									<div className="menu cursor-pointer sm:mt-0 mt-16" onClick={() => setIsOpen(true)}>
-										<MdOutlineMenu size={35}/>
+									<div className="menu cursor-pointer" onClick={() => setIsOpen(true)}>
+										<MdOutlineMenu size={35} />
 									</div>
 								)}
 							</div>
@@ -62,12 +63,12 @@ export function UserProfile() {
 						<div className="about-block mt-6 cursor-pointer">
 							<div className="border rounded-xl shadow-xl p-10 hover:shadow-sm transition-all flex flex-col flex-wrap">
 								<h3 className="font-bold text-xl select-none">О нас: </h3>
-								<p className="cursor-text" dangerouslySetInnerHTML={{__html: aboutReplaced}}></p>
+								<p className="cursor-text" dangerouslySetInnerHTML={{ __html: aboutReplaced }}></p>
 							</div>
 						</div>
-						<div className="flex justify-between align-center mt-5">
+						<div className="bottom-info flex justify-between align-center mt-5">
 							<span className="text-slate-500">Аккаунт создан {createDate(data.createdAt)}</span>
-							<span className="font-bold"><Link to={'/reviews/' + data._id}>Смотреть отзывы</Link></span>
+							<div className="font-bold"><Link to={'/reviews/' + data._id}>Смотреть отзывы</Link></div>
 						</div>
 					</div>
 				) : (

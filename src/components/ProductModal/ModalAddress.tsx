@@ -16,7 +16,7 @@ export function ModalAddress(props: IProps) {
                     <div className="close-btn" onClick={() => props.setIsAddress(false)}><IoMdClose size={30} /></div>
                     <h2 className="text-3xl">Адрес:</h2>
                     <b className="text-3xl text-center">{props.address}</b>
-                    <a className='mt-4' href={`https://yandex.ru/maps/geo/` + props.address}><button>Посмотреть город на карте</button></a>
+                    <a className='mt-4' target='_blank' href={`https://yandex.ru/maps/geo/` + props.address}><button>Посмотреть город на карте</button></a>
                 </div>
             </div>
         </>

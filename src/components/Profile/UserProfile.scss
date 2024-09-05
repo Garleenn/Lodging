@@ -11,3 +11,17 @@
 .info-user-all {
 	width: calc(100vw - 20%) !important;
 }
+
+@media (max-width: 900px) {
+	.main-info {
+		position: relative;
+	}
+	.right-block-profile span {
+		position: absolute;
+		left: 0%;
+		bottom: -45%;
+	}
+	.bottom-info div {
+		text-align: right;
+	}
+}

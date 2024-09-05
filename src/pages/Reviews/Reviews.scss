@@ -27,3 +27,10 @@
 		}
 	}
 }
+
+@media (max-width: 900px) {
+	.main-review {
+		align-items: start;
+		flex-direction: column;
+	}
+}
