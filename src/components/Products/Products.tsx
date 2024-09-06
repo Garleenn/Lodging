@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { useProducts } from '../../hooks/useProducts';
 import { useAddToCart, useRemoveFromCart } from '../../hooks/useCart';
 import { useSession } from '../../hooks/useUser';
-import { Footer } from '../Footer/Footer';
 
 export function Products() {
 
@@ -18,6 +17,7 @@ export function Products() {
 		sPrice: null,
 		dPrice: null,
 		title: ``,
+		limit: 1,
 	});
 
 	const { isLoading, data, refetch } = useProducts(filters);
@@ -59,12 +59,46 @@ export function Products() {
 		doCart();
 	}, [data, session]);
 
+	const [navigateNumbers, setТavigateNumbers] = useState<number[] | string[]>([]);
+
+	useEffect(() => {
+		const navigate = () => {
+			if(data && data.length) {
+				let count = 0;
+				let navigateNumbers: any[] = []
+				for(let i = 0; i < data.length; i++) {
+					if((i + 1) % 1 === 0) {
+						if(count < 5) {
+							count++;
+							navigateNumbers.push(count);
+						} else {
+							navigateNumbers.push(`>`);
+						}
+						setТavigateNumbers(navigateNumbers);
+					} else {
+						setТavigateNumbers([1]);
+					}
+				}
+			}
+		};
+
+		navigate();
+	}, [data]);
+
+	const navigatePage = (index: number) => {
+		setFilters((prev: any) => {return {...prev, limit: navigateNumbers[index]} });
+	}
+
+	useEffect(() => {
+		refetch();
+	}, [filters]);
+
 
 	return (
 		<>
-			{data && <CenterPage setFilters={setFilters} refetch={refetch} />}
+			{data && <CenterPage setFilters={setFilters} />}
 			{!isLoading && data ? (
-				<div className="products-container flex items-center justify-center gap-10 flex-wrap">
+				<div className="products-container flex items-center justify-center xl:gap-10 gap-5 flex-wrap">
 					{data.map((product: IProduct, index: number) => (
 						<div className="card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product._id}>
 							<div className="image-card select-none">
@@ -97,6 +131,11 @@ export function Products() {
 			{data && data.length == 0 && (
 					<h2 className='text-center text-2xl font-semibold text-slate-500'>Таких товаров пока нет(</h2>
 			)}
+			<div className="navigator-container flex gap-3 xl:justify-start justify-center xl:ml-32 mt-10">
+				{navigateNumbers && navigateNumbers.map((number: number | string, index: number) => (
+					<button onClick={() => navigatePage(index)} key={number} className='border border-slate-400 p-5 flex items-center justify-center'>{number}</button>
+				))}
+			</div>
 		</>
 	)
 }

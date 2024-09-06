@@ -109,7 +109,8 @@ app.get('/products', async (req, res) => {
     const city = req.query.city;
     const sPrice = Number(req.query.sPrice);
     const dPrice = Number(req.query.dPrice);
-    const title = req.query.title; // название
+    const title = req.query.title;
+    const limit = req.query.limit;
 
     let sorting = {}; 
     if(filtre == 'price1' && filtre != 'null') {
@@ -148,8 +149,30 @@ app.get('/products', async (req, res) => {
         search.price = {$gte: sPrice, $lte: dPrice};
     }
 
-    let data = await Product.find(search).sort(sorting);
-    res.send(data).status(200);
+    let changedProducts = [];
+
+    if(!limit) {
+        changedProducts = [0, 50];
+    } if (limit == 1) {
+        changedProducts = [0, 50];
+    } if (limit == 2) {
+        changedProducts = [50, 100];
+    } if (limit == 3) {
+        changedProducts = [100, 150];
+    } if (limit == 4) {
+        changedProducts = [150, 200];
+    } if (limit == 5) {
+        changedProducts = [200, 250];
+    } if (limit == `>`) {
+        changedProducts = [250, 300];
+    }
+
+    let data = await Product.find(search).sort(sorting).skip(changedProducts[0]).limit(changedProducts[1]);
+    try {
+        res.send(data).status(200);
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 app.get('/myProducts', async (req, res) => {

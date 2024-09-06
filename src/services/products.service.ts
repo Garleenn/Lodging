@@ -13,6 +13,7 @@ class getProducts {
 				sPrice: filters.sPrice,
 				dPrice: filters.dPrice,
 				title: filters.title,
+				limit: filters.limit,
 			}
 		});
 	}
