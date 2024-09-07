@@ -13,4 +13,5 @@ export interface IProduct {
 	places: number,
 	createdAt: string,
 	address: string,
+	allProductsCount: number,
 }

@@ -40,7 +40,7 @@ export function CenterPage(props: IProps) {
 				<div className="image-block"></div>
 				<input {...register('title')} className='top-input w-1/4' type="search" placeholder='Найти ночлег'/>
 			</div>
-			<div className="flex justify-center filtre-container p-8 gap-8">
+			<div className="flex justify-center filtre-container px-8 pt-8 pb-4 gap-8">
 				<select {...register('isHotel')} defaultValue={'null'}>
 					<option value='null'>Тип</option>
 					<option value="true">Отель</option>

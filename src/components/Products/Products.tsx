@@ -61,18 +61,26 @@ export function Products() {
 
 	const [navigateNumbers, setТavigateNumbers] = useState<number[] | string[]>([]);
 
+	const [count, setCount] = useState(6);
+
 	useEffect(() => {
 		const navigate = () => {
 			if(data && data.length) {
-				let count = 0;
+				let countThis = 0;
+				let countWhile = 1;
 				let navigateNumbers: any[] = []
-				for(let i = 0; i < data.length; i++) {
-					if((i + 1) % 1 === 0) {
-						if(count < 5) {
-							count++;
-							navigateNumbers.push(count);
+				console.log(data[0].allProductsCount);
+				for(let i = 0; i < data[0].allProductsCount; i++) {
+					countWhile++;
+					if(countWhile % 5 == 0) {
+						if(countThis < 5) {
+							countThis++;
+							navigateNumbers.push(countThis);
 						} else {
-							navigateNumbers.push(`>`);
+							if(navigateNumbers[5] != `>`) {
+								navigateNumbers.push(`>`);
+								// setCount(6);
+							}
 						}
 						setТavigateNumbers(navigateNumbers);
 					} else {
@@ -85,8 +93,13 @@ export function Products() {
 		navigate();
 	}, [data]);
 
-	const navigatePage = (index: number) => {
-		setFilters((prev: any) => {return {...prev, limit: navigateNumbers[index]} });
+	const navigatePage = async (index: number) => {
+		if(index != 5) {
+			setFilters((prev: any) => {return {...prev, limit: navigateNumbers[index]} });
+		} else {
+			setFilters((prev: any) => {return {...prev, limit: count } });
+			setCount(count + 1);
+		}
 	}
 
 	useEffect(() => {
@@ -98,6 +111,8 @@ export function Products() {
 		<>
 			{data && <CenterPage setFilters={setFilters} />}
 			{!isLoading && data ? (
+				<>
+				<h3 className='text-2xl font-bold text-slate-500 flex justify-center'>Найдено {data[0].allProductsCount} вариантов</h3>
 				<div className="products-container flex items-center justify-center xl:gap-10 gap-5 flex-wrap">
 					{data.map((product: IProduct, index: number) => (
 						<div className="card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product._id}>
@@ -123,6 +138,7 @@ export function Products() {
 						</div>
 					))}
 				</div>
+				</>
 			) : (
 				<div className="flex justify-center my-20">
 					<h1 className='text-center'>Загрузка...</h1>
@@ -131,9 +147,9 @@ export function Products() {
 			{data && data.length == 0 && (
 					<h2 className='text-center text-2xl font-semibold text-slate-500'>Таких товаров пока нет(</h2>
 			)}
-			<div className="navigator-container flex gap-3 xl:justify-start justify-center xl:ml-32 mt-10">
+			<div className="navigator-container flex gap-3 justify-center mt-10">
 				{navigateNumbers && navigateNumbers.map((number: number | string, index: number) => (
-					<button onClick={() => navigatePage(index)} key={number} className='border border-slate-400 p-5 flex items-center justify-center'>{number}</button>
+					<a href="#"><button onClick={() => navigatePage(index)} key={number} className='border border-slate-400 p-5 flex items-center justify-center'>{number}</button></a>
 				))}
 			</div>
 		</>

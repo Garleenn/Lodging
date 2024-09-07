@@ -61,9 +61,15 @@ export function UserProfile() {
 							</div>
 						</div>
 						<div className="about-block mt-6 cursor-pointer">
-							<div className="border rounded-xl shadow-xl p-10 hover:shadow-sm transition-all flex flex-col flex-wrap">
-								<h3 className="font-bold text-xl select-none">О нас: </h3>
-								<p className="cursor-text" dangerouslySetInnerHTML={{ __html: aboutReplaced }}></p>
+							<div className="border rounded-xl shadow-xl x:p-10 p-4 hover:shadow-sm transition-all flex flex-col flex-wrap xl:mt-2 mt-10">
+							{data.about ? (
+								<>
+									<h3 className="font-bold text-xl select-none">О нас: </h3>
+									<p className="cursor-text" dangerouslySetInnerHTML={{ __html: aboutReplaced }}></p>
+								</>
+							) : (
+								<h3 className="font-bold xl:text-xl text-slate-500 select-none">Пользователь не добавил описание</h3>
+							)}
 							</div>
 						</div>
 						<div className="bottom-info flex justify-between align-center mt-5">

@@ -10,10 +10,10 @@ const bcrypt = require('bcrypt');
 
 let corsOptions = {
     origin: 'http://localhost:5173',
-    credentials: true,
+    credentials: true, 
 }
 app.use(cors(corsOptions));
-app.use(express.static('public'));
+app.use(express.static('public')); 
 app.use(cookieParser());
 
 app.use(express.json({limit: '50mb'}));
@@ -94,7 +94,8 @@ const productSchema = new mongoose.Schema({
     address: {
         type: String,
         required: true,
-    }
+    },
+    allProductsCount: Number,
 }, {
     timestamps: true,
 });
@@ -149,26 +150,25 @@ app.get('/products', async (req, res) => {
         search.price = {$gte: sPrice, $lte: dPrice};
     }
 
-    let changedProducts = [];
+    let changedProducts = 0;
 
-    if(!limit) {
-        changedProducts = [0, 50];
-    } if (limit == 1) {
-        changedProducts = [0, 50];
-    } if (limit == 2) {
-        changedProducts = [50, 100];
-    } if (limit == 3) {
-        changedProducts = [100, 150];
-    } if (limit == 4) {
-        changedProducts = [150, 200];
-    } if (limit == 5) {
-        changedProducts = [200, 250];
-    } if (limit == `>`) {
-        changedProducts = [250, 300];
+    if (limit != 1) {
+        changedProducts = (limit * 50) - 50;
+    } else if (limit == `>`) {
+        changedProducts = (6 * 50) - 50;
+    } else {
+        changedProducts = 0;
     }
 
-    let data = await Product.find(search).sort(sorting).skip(changedProducts[0]).limit(changedProducts[1]);
     try {
+        let data = await Product.find(search).sort(sorting).skip(changedProducts).limit(50).sort({createdAt: -1});
+        
+        let allProducts = await Product.find(search).sort(sorting);
+        
+        if(data && data.length) {
+            data[0].allProductsCount = allProducts.length;
+        }
+
         res.send(data).status(200);
     } catch (error) {
         console.log(error);
@@ -202,7 +202,7 @@ app.post('/products', async (req, res) => {
 
     let convertedImages = [];
 
-    if(images && images.length > 0) {
+    if(images && images.length > 1) {
         for(let i = 0; i < images.length; i++) {
             let avaImage = images[i];
             const base64String = avaImage.replace(/^data:.+;base64,/, '');
@@ -217,8 +217,10 @@ app.post('/products', async (req, res) => {
                 console.log(error)
             }
         }
+    } else {
+        convertedImages.push(images[1]);
     }
-
+ 
     let ratin;
 
     if(isHotel) {

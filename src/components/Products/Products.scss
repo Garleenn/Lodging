@@ -9,6 +9,8 @@
 	position: relative;
 	transition: all 320ms;
 	padding-bottom: 50px;
+	max-width: 305px;
+	// border-color: #646cff;
 
 	.btn-link-bottom {
 		position: absolute;
@@ -65,6 +67,7 @@
 .navigator-container button {
 	width: 60px;
 	height: 60px;
+	border-color: #646cff; // 52 на 48
 }
 
 @media (max-width: 600px) {
