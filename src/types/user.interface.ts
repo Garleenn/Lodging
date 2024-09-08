@@ -42,6 +42,7 @@ export interface ICart {
 export interface IRegister extends IUser {
 	password: string,
 	exPassword: string,
+	code: number,
 }
 
 export interface IIsCreator {

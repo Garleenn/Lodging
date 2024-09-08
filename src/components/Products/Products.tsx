@@ -78,7 +78,8 @@ export function Products() {
 							navigateNumbers.push(countThis);
 						} else {
 							if(navigateNumbers[5] != `>`) {
-								navigateNumbers.push(`>`);
+								navigateNumbers[5] = `...`;
+								navigateNumbers[6] = count;
 								// setCount(6);
 							}
 						}
@@ -94,8 +95,9 @@ export function Products() {
 	}, [data]);
 
 	const navigatePage = async (index: number) => {
-		if(index != 5) {
+		if(index != 6) {
 			setFilters((prev: any) => {return {...prev, limit: navigateNumbers[index]} });
+			setCount(6);
 		} else {
 			setFilters((prev: any) => {return {...prev, limit: count } });
 			setCount(count + 1);

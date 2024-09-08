@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 
 let corsOptions = {
     origin: 'http://localhost:5173',
@@ -26,6 +27,16 @@ app.use(session({
     rolling: false,
     cookie: { maxAge: 600000000000 }
 }));
+
+let transporter = nodemailer.createTransport({
+    host: 'smtp.yandex.ru',
+    port: 465,
+    secure: true,
+    auth: {
+        user: `Garleenn@yandex.ru`,
+        pass: `jywoficpitzalsbf`,
+    },  
+});
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`)
@@ -113,7 +124,10 @@ app.get('/products', async (req, res) => {
     const title = req.query.title;
     const limit = req.query.limit;
 
-    let sorting = {}; 
+    let sorting = {
+        createdAt: -1
+    }; 
+
     if(filtre == 'price1' && filtre != 'null') {
         sorting.price = 1;
     } 
@@ -161,7 +175,7 @@ app.get('/products', async (req, res) => {
     }
 
     try {
-        let data = await Product.find(search).sort(sorting).skip(changedProducts).limit(50).sort({createdAt: -1});
+        let data = await Product.find(search).sort(sorting).skip(changedProducts).limit(50);
         
         let allProducts = await Product.find(search).sort(sorting);
         
@@ -536,7 +550,7 @@ app.get('/user', async (req, res) => {
 });
 
 app.post('/users', async(req, res) => {
-    const { login, email, password, role, raiting } = req.body;
+    const { login, email, password, role, raiting, code } = req.body;
 
     let raitingIsHotel;
     if(role == 'Отель') {
@@ -547,21 +561,49 @@ app.post('/users', async(req, res) => {
 
     const hashPassword = bcrypt.hashSync(password, salt);
     
-    const newUser = new User({
-        login: login,
-        email: email,
-        password: hashPassword,
-        avaImage: "https://yt3.googleusercontent.com/ytc/AIf8zZTOqVAj1luCxSiohOyyV5yKwi0DDFy6PruvGoCEeg=s900-c-k-c0x00ffffff-no-rj",
-        role: role,
-        reviews: [], 
-        cart: [],
-        grade: 0,
-        raiting: raitingIsHotel,
-    });
-     
+    if(code == req.session.code) {
+        const newUser = new User({
+            login: login,
+            email: email,
+            password: hashPassword,
+            avaImage: "https://yt3.googleusercontent.com/ytc/AIf8zZTOqVAj1luCxSiohOyyV5yKwi0DDFy6PruvGoCEeg=s900-c-k-c0x00ffffff-no-rj",
+            role: role,
+            reviews: [], 
+            cart: [],
+            grade: 0,
+            raiting: raitingIsHotel,
+        });
+
+        try {
+            await newUser.save();
+            req.session.username = email;
+            res.sendStatus(201);
+        } catch(error) {
+            console.log(error);
+            res.sendStatus(400);
+        }
+    } else {
+        res.send(`Неверный код`).status(400);
+    }
+    
+});
+
+app.post('/check-mail', async (req, res) => {
+    const { email } = req.body;
+
+    const code = Math.floor(1000 + Math.random() * 9000);
+    
     try {
-        await newUser.save();
-        req.session.username = email;
+        await transporter.sendMail({
+            from: 'Garleenn@yandex.ru',
+            to: email,
+            subject: 'Проверочный код для всеночлеги.рф',
+            text: `Ваш код для входа в систему: ${code}`,
+            html: `<h1>Доброе время суток</h1>, <b>спасибо что выбрали всеночлеги.рф!</b><p>Ваш код для подтверждения аккаунта: ${code}</p>`,
+        });
+     
+        req.session.code = code;
+
         res.sendStatus(201);
     } catch(error) {
         console.log(error);

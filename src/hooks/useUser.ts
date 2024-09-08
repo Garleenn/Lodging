@@ -86,6 +86,13 @@ export const useCheck = (id: string) => {
 	});
 }
 
+export const useCheckMail = (email: string) => {
+	return useMutation({
+		mutationKey: ['checkMail'],
+		mutationFn: () => getUser.checkMail(email),
+	});
+}
+
 export const useAddReview = (form: IReviews) => {
 	const { mutate, isError, isSuccess, error } = useMutation({
 		mutationKey: ['addReview'],

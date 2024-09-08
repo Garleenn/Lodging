@@ -58,16 +58,16 @@
 		width: 100% !important;
 	}
 
-	.navigator-container button {
-		width: 30px !important;
-		height: 30px !important;
+	.navigator-container a button {
+		width: 10px !important;
+		height: 10px !important;
 	}
 }
 
-.navigator-container button {
+.navigator-container a button {
 	width: 60px;
 	height: 60px;
-	border-color: #646cff; // 52 на 48
+	border-color: #646cff;
 }
 
 @media (max-width: 600px) {

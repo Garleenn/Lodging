@@ -2,7 +2,7 @@ import './Enter.scss'
 import { SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
 import { Header } from "../../components/Header/Header";
 import { IRegister } from "../../types/user.interface";
-import { useRegister } from "../../hooks/useUser";
+import { useCheckMail, useRegister } from "../../hooks/useUser";
 import { useState } from "react";
 import { Link } from 'react-router-dom';
 import { Footer } from '../../components/Footer/Footer';
@@ -14,7 +14,11 @@ export function Register() {
 	const [form, setForm] = useState<IRegister>();
 	const [err, setErr] = useState(``);
 
+	const [email, setEmail] = useState(``);
+
 	const { mutate, isError } = useRegister<IRegister>(form);
+
+	const mailCheck = useCheckMail(email);
 
 	const submit: SubmitHandler<IRegister> = (data: IRegister) => {
 		setForm(data);
@@ -60,7 +64,7 @@ export function Register() {
 					<label>Имя</label>
 					<input {...register('login', { required: true })} type="text" placeholder="Введите логин" />
 					<label>Ваш email</label>
-					<input {...register('email', { required: true })} type="email" placeholder="Введите вашу почту" />
+					<input {...register('email', { required: true })} type="email" placeholder="Введите вашу почту" onChange={(e) => setEmail(e.target.value)} />
 					<label>Ваша роль</label>
 					<select className='select-menu' {...register('role', { required: true })} onChange={(e) => {setRole(e.target.value)} }>
 						<option value="">Выбирете роль</option>
@@ -79,7 +83,18 @@ export function Register() {
 					<label>Повторите пароль</label>
 					<input {...register('exPassword', { required: true })} type="password" placeholder="Введите пароль" />
 				</div>
-				<button type='submit' className="btn mt-10">Зарегестрироваться!</button>
+				{mailCheck.isSuccess ? (
+					<>
+					<div className="flex flex-col items-start">
+						<label className='mt-3 flex'>Введите код</label>
+						<input className='mt-1' {...register('code')} type="number" placeholder="Введите код, полученный на почту" />
+					</div>
+						<button type='submit' className="btn mt-10">Зарегестрироваться!</button>
+						{mailCheck.error && (<span className='text-red-500 font-semibold'>Неверный код!</span>)}
+					</>
+				) : (
+						<button type='button' onClick={() => mailCheck.mutate()} className="btn mt-10">Получить код</button>
+				)}
 				{err && (<h3 className="text-red-500 font-bold text-xl mt-5">{err}</h3>)}
 				<Link className='mt-8' to='/login'>Уже есть аккаунт? Войдите!</Link>
 			</form>

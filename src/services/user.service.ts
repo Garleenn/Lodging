@@ -29,6 +29,7 @@ class getUser {
 			password: form.password,
 			role: form.role,
 			raiting: form.raiting,
+			code: form.code,
 		});
 	}
 
@@ -64,6 +65,10 @@ class getUser {
 				id
 			}
 		});
+	}
+
+	async checkMail(email: string) {
+		return axios.post<IIsCreator>('/check-mail', {email: email});
 	}
 
 	async addReview(form: IReviews) {
