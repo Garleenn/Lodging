@@ -24,7 +24,7 @@ export const useAddToCart = (id: string) => {
 }
 
 export const useRemoveFromCart = (id: string) => {
-	const { mutate, isError } = useMutation({
+	const { mutate, isError, isSuccess } = useMutation({
 		mutationKey: ['cart-delete'],
 		mutationFn: () => getCart.removeFromCart(id),
 		onSuccess() {
@@ -35,5 +35,5 @@ export const useRemoveFromCart = (id: string) => {
 
 	const QueryClient = useQueryClient();
 
-	return { mutate, isError }
+	return { mutate, isError, isSuccess }
 }

@@ -16,16 +16,16 @@ export function Register() {
 
 	const [email, setEmail] = useState(``);
 
-	const { mutate, isError } = useRegister<IRegister>(form);
+	const { mutate, isError, error } = useRegister<IRegister>(form);
 
 	const mailCheck = useCheckMail(email);
 
 	const submit: SubmitHandler<IRegister> = (data: IRegister) => {
 		setForm(data);
-		mutate(data);
+		mutate();
 
-		if (isError) {
-			setErr(`Errorchik`);
+		if (isError || mailCheck.error || error) {
+			setErr(`Неверный код`);
 		} else {
 			reset();
 			setErr(``);
@@ -69,7 +69,7 @@ export function Register() {
 					<select className='select-menu' {...register('role', { required: true })} onChange={(e) => {setRole(e.target.value)} }>
 						<option value="">Выбирете роль</option>
 						<option value="Отель">Отель</option>
-						<option value="Частник">Частный</option>
+						<option value="Частник">Частник</option>
 						<option value="Турист">Турист</option>
 					</select>
 					{role == 'Отель' && (

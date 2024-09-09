@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 import { useLogOut } from '../../hooks/useUser'
 
 interface IProps {
-	setIsOpen: (isOpen: boolean) => void
+	setIsOpen: (isOpen: boolean) => void,
+	role: boolean
 }
 
 export function Actions(props: IProps) {
@@ -18,7 +19,7 @@ export function Actions(props: IProps) {
 				<div className='nav'>
 					<ul className='flex gap-4 flex-col'>
 						<li className='xl:text-xl text-base'><Link to='/changeProfile'>Изменить данные профиля</Link></li>
-						<li className='xl:text-xl text-base'><Link to='/createLodging'>Разместить ночлег</Link></li>
+						{props.role && (<li className='xl:text-xl text-base'><Link to='/createLodging'>Разместить ночлег</Link></li>)}		
 						<li className='xl:text-xl text-base'><Link to='/errors'>Сообщить об ошибке</Link></li>
 						<li className='xl:text-xl text-base'><Link to='/' onClick={() => mutate()}>Выйти из аккаунта</Link></li>
 					</ul>

@@ -34,7 +34,7 @@ export function UserProfile() {
 	return (
 		<>
 			<Header />
-			{isOpen && (<Actions setIsOpen={setIsOpen} />)}
+			{isOpen && (<Actions setIsOpen={setIsOpen} role={data?.role == 'Отель' || data?.role == 'Частник'} />)}
 			<div className="flex flex-col items-center w-100 gap-12 my-10">
 				{!error && data && isCreator ? (
 					<div className="info-user-all">

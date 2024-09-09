@@ -44,14 +44,14 @@ export function Product() {
 
 	const removeCart = useRemoveFromCart(id);
 
-	const addToCart = () => {
+	const addToCart = async () => {
 		if(!isInCart) {
 			mutate();
 			// refetch();
 		} else {
 			removeCart.mutate();
 			session.refetch();
-			// setIsInCart(false);
+			setIsInCart(false);
 		}
 	}
 
@@ -97,7 +97,7 @@ export function Product() {
 		}
 
 		doCart();
-	}, [session]);
+	}, [session.data, session.refetch]);
 
 	const [isChanged, setIsChanged] = useState(false);
 

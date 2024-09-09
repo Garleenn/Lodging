@@ -21,7 +21,7 @@ export const useUserProducts = (id: string) => {
 }
 
 export const useRegister = (form: IRegister) => {
-	const { mutate, isError } = useMutation({
+	const { mutate, isError, error } = useMutation({
 		mutationKey: ['userPost52'],
 		mutationFn: () => getUser.Register(form),
 		onSuccess() {
@@ -29,13 +29,14 @@ export const useRegister = (form: IRegister) => {
 			QueryClient.invalidateQueries({queryKey: ['userSession']});
 			navigate(0);
 		}
+		
 	});
 
 	const QueryClient = useQueryClient();
 
 	const navigate = useNavigate();
 
-	return { mutate, isError }
+	return { mutate, isError, error }
 }
 
 export const useUserLogin = (form: IRegister) => {
