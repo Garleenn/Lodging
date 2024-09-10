@@ -65,29 +65,29 @@ export function Products() {
 
 	useEffect(() => {
 		const navigate = () => {
-			if(data && data.length) {
+			if(data && data.length && data[0].allProductsCount) {
 				let countThis = 0;
 				let countWhile = 1;
 				let navigateNumbers: any[] = []
 				console.log(data[0].allProductsCount);
 				for(let i = 0; i < data[0].allProductsCount; i++) {
 					countWhile++;
-					if(countWhile % 5 == 0) {
+					if(countWhile % 50 === 0) {
 						if(countThis < 5) {
 							countThis++;
 							navigateNumbers.push(countThis);
 						} else {
-							if(navigateNumbers[5] != `>`) {
+							if(navigateNumbers[5] != `...`) {
 								navigateNumbers[5] = `...`;
 								navigateNumbers[6] = count;
 								// setCount(6);
 							}
 						}
 						setТavigateNumbers(navigateNumbers);
-					} else {
-						setТavigateNumbers([1]);
 					}
 				}
+			} else {
+				setТavigateNumbers([]);
 			}
 		};
 

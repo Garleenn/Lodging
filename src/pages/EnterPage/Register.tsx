@@ -27,8 +27,8 @@ export function Register() {
 		if (isError || mailCheck.error || error) {
 			setErr(`Неверный код`);
 		} else {
-			reset();
-			setErr(``);
+			// reset();
+			setErr(`Ошибка! Невозможно зарегестрировать пользователя!`);
 		}
 	}
 

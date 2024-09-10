@@ -17,7 +17,7 @@ export function Header() {
 
 	return (
 		<>
-			<div className="header-container flex border-b -black justify-between py-10 px-16 w-100 items-center gap-8">
+			<div className="header-container flex border-b justify-between py-10 px-16 w-100 items-center gap-8">
 				{/* <div className="flex items-center gap-5"> */}
 					<div className="w-184">
 						<Link to='/'><img className='cursor-pointer' src={'/vite.svg'}></img></Link>
@@ -27,7 +27,7 @@ export function Header() {
 				<nav>
 						{data && !isError ? (
 					<ul className='flex gap-8'>
-						<li><Link className='header-link' to='/booking'>
+						<li><Link className='header-link' to='/'>
 							<FaShop size={40}/>
 						</Link></li>
 						<li><Link className='header-link' to='/favorites'>

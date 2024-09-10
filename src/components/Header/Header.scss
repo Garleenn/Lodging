@@ -36,6 +36,7 @@ nav ul li .header-link {
 	width: 80%;
 	height: 100%;
 	z-index: 52;
+	animation: header 340ms ease-in-out forwards;
 }
 
 .burger-container nav {
@@ -51,4 +52,19 @@ nav ul li .header-link {
 
 .header-container {
 	border-bottom: #646cff 3.25px solid;
+	// position: fixed;
+	// top: 0;
+	// left: 0;
+	// width: 100%;
+	// background-color: #fff;
+	// z-index: 52;
+}
+
+@keyframes header {
+	0% {
+		right: -25%;
+	}
+	100% {
+		right: 0;
+	}
 }

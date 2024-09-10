@@ -168,8 +168,6 @@ app.get('/products', async (req, res) => {
 
     if (limit != 1) {
         changedProducts = (limit * 50) - 50;
-    } else if (limit == `>`) {
-        changedProducts = (6 * 50) - 50;
     } else {
         changedProducts = 0;
     }
@@ -583,7 +581,7 @@ app.post('/users', async(req, res) => {
             res.sendStatus(400);
         }
     } else {
-        res.sendStatus(401);
+        res.sendStatus(501);
     }
     
 });
@@ -801,7 +799,11 @@ app.put('/delete-review', async (req, res) => {
 app.get('/cart', async (req, res) => {
     if(req.session.username) {
         const user = await User.findOne({email: req.session.username});
-        res.send(user.cart).status(200);
+        try {
+            res.send(user.cart).status(200);
+        } catch (error) {
+            console.log(error);
+        }
     } else {
         res.sendStatus(404);
     }

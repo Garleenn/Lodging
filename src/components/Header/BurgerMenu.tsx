@@ -23,7 +23,7 @@ export function Menu(props: IProps) {
 					) : (
 						<ul className='flex gap-8 flex-col'>
 							<li className='flex gap-4 items-center'>
-								<Link to={`/booking`}>
+								<Link to={`/`}>
 									<FaShop size={40}/>Брони
 								</Link></li>
 							<li className='flex gap-4 items-center'>

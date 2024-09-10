@@ -6,6 +6,7 @@
 	width: 25%;
 	height: 100%;
 	z-index: 52;	
+	animation: side-menu 340ms ease-in-out forwards;
 }
 
 @media (max-width: 1024px) {
@@ -14,5 +15,14 @@
 	}
 	.nav {
 		display: block;
+	}
+}
+
+@keyframes side-menu {
+	0% {
+		right: -25%;
+	}
+	100% {
+		right: 0;
 	}
 }

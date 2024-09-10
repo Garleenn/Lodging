@@ -1,8 +1,8 @@
+import './Cart.scss'
 import { GrFavorite } from "react-icons/gr";
 import { Header } from "../../components/Header/Header";
 import { useCart, useRemoveFromCart } from "../../hooks/useCart";
 import { Link } from 'react-router-dom';
-import './Cart.scss'
 import { ICart } from "../../types/user.interface";
 import { useState } from "react";
 import { Footer } from "../../components/Footer/Footer";
@@ -41,7 +41,7 @@ export function Cart() {
 										<i>Рейтинг: {product.raiting} звёзд</i>
 										<span className='text-xl'>Цена: <b>{product.price} руб.</b></span>
 										<Link role='button' className='w-100 btn mt-2 text-center' to={'/product/' + product.idProduct}>Подробнее</Link>
-										<div className="favourites" onClick={() => removeProduct(product.idProduct)}>
+										<div className="favourite" onClick={() => removeProduct(product.idProduct)}>
 											<GrFavorite size={32} className='w-fit' />
 										</div>
 									</div>

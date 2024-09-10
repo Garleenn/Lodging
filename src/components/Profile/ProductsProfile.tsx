@@ -1,6 +1,6 @@
+import './ProductsProfile.scss';
 import { useParams, Link } from 'react-router-dom';
 import { useSession, useUserProducts } from '../../hooks/useUser';
-import './ProductsProfile.scss';
 import { IProduct } from '../../types/product.interface';
 import { GrFavorite } from 'react-icons/gr';
 import { useEffect, useState } from 'react';

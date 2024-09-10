@@ -1,10 +1,13 @@
 .image-block {
-	background-image: url('../../../public/lodgingPhoto.webp');
-	background-position: center center;
+	
+	background-image: url('https://sun9-16.userapi.com/impg/AGVNmwCs3e9cCPOtJKEufhTw-jbqSh0tZqscdQ/eBKleK88ziY.jpg?size=2560x1440&quality=95&sign=0d6f6f75df4518150f6bf55bf9800e09&type=album');
+	background-position: center center !important;
 	background-repeat: no-repeat;
 	background-size: 1920px 1080px;
 	width: 100%;
-	height: 500px;
+	height: 600px;
+	background-size: cover;
+  background-attachment: fixed;
 }
 
 .main-container {

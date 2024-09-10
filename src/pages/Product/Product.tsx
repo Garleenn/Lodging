@@ -1,8 +1,8 @@
+import './Product.scss'
 import { GrFavorite } from 'react-icons/gr'
 import { Link, useParams } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { useCallback, useEffect, useState } from "react";
-import './Product.scss'
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
 import { useDeleteProduct, useProduct } from '../../hooks/useProducts';
 import { useAddToCart, useRemoveFromCart } from '../../hooks/useCart';
@@ -15,6 +15,7 @@ import { PlacesModal } from '../../components/ProductModal/PlacesModal';
 import { ICart } from '../../types/user.interface';
 import { ModalAddress } from '../../components/ProductModal/ModalAddress';
 import { Footer } from '../../components/Footer/Footer';
+import { ImageModal } from './../../components/ProductModal/ImageModal';
 
 export function Product() {
 
@@ -105,10 +106,18 @@ export function Product() {
 
 	const [isAddress, setIsAddress] = useState(false);
 
+	const [isOpenImage, setIsOpenImage] = useState(false)
+
 
 	return (
 		<>
 		<Header />
+		{isOpenImage && data && (
+			<>
+				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 xl:opacity-40 opacity-90"></div>
+				<ImageModal images={data.images} setIsOpenImage={setIsOpenImage} indexNow={index} />
+			</>
+		)}
 		{isOpen && data && (
 			<>
 				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
@@ -142,11 +151,11 @@ export function Product() {
 									</span>
 								</div>
 							)}
-							<img className='select-none' src={data.images[index]} alt={data.title} />
+							<img className='select-none cursor-pointer' src={data.images[index]} alt={data.title} onClick={() => setIsOpenImage(true)} />
 							{data && session.data?._id == data.authorId && (
-								<div className="absolute top-5 left-5">
+								<div className="absolute xl:top-5 xl:left-5 top-4 left-4">
 									<span>
-										{!isOpenMenu && (<div onClick={() => setIsOpenMenu(true)} className="p-4 cursor-pointer bg-slate-200 rounded-full z-10"><IoMenu className='' size={28} /></div>)}
+										{!isOpenMenu && (<div onClick={() => setIsOpenMenu(true)} className="xl:p-4 p-2 cursor-pointer bg-slate-200 rounded-full z-10"><IoMenu className='' size={28} /></div>)}
 									</span>
 									{isOpenMenu && data && (
 										<ul className='bg-slate-100 z-10 p-6 rounded-2xl relative border-2 border-black'>
@@ -167,7 +176,7 @@ export function Product() {
 							)}
 							<i className='select-none'>Выставленно {createDate(data.createdAt)}</i>
 							{session.data && !session.isError && (
-								<div className="favourite" onClick={addToCart}>
+								<div className="favourites" onClick={addToCart}>
 										<GrFavorite size={32} className='w-fit' color={isInCart ? 'crimson' : '#000'} />
 								</div>
 							)}

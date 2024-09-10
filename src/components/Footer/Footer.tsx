@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import './Footer.scss'
+import { FaRegArrowAltCircleUp } from 'react-icons/fa'
 
 export function Footer() {
 
@@ -14,7 +15,10 @@ export function Footer() {
 					<a className='text-2xl xl:text-xl text-center' href="https://vk.com/ivangorbenko52">Связаться с разработчиком</a>
 					<a className='text-2xl xl:text-xl text-center' href="https://vk.com/ivangorbenko52">Соглашения и лицензии</a>
 			</div>
-			<span className="text-slate-500 flex justify-center pb-4 xl:mt-2 mt-3">Все права защищены 2024©</span>
+			<div className="flex flex-col items-center xl:pl-10">
+				<span className="text-slate-500 flex justify-center pb-4 xl:mt-2 mt-3">Все права защищены 2024©</span>
+				<a href="#" className=" pb-6 xl:mt-2 mt-3 w-fit"><FaRegArrowAltCircleUp size={35} /></a>
+			</div>
 		</>
 	)
 }
