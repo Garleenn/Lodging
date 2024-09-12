@@ -22,13 +22,13 @@ export function Register() {
 
 	const submit: SubmitHandler<IRegister> = (data: IRegister) => {
 		setForm(data);
-		mutate();
-
-		if (isError || mailCheck.error || error) {
+		
+		if (isError || error) {
 			setErr(`Неверный код`);
+			reset();
 		} else {
-			// reset();
-			setErr(`Ошибка! Невозможно зарегестрировать пользователя!`);
+			mutate();
+			setErr(``);
 		}
 	}
 
@@ -90,7 +90,7 @@ export function Register() {
 						<input className='mt-1' {...register('code')} type="number" placeholder="Введите код, полученный на почту" />
 					</div>
 						<button type='submit' className="btn mt-10">Зарегестрироваться!</button>
-						{mailCheck.error && (<span className='text-red-500 font-semibold'>Неверный код!</span>)}
+						{isError && (<span className='text-xl mt-5 text-red-500 font-semibold'>Неверный код!</span>)}
 					</>
 				) : (
 						<button type='button' onClick={() => mailCheck.mutate()} className="btn mt-10">Получить код</button>

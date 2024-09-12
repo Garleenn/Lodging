@@ -40,6 +40,14 @@ class getUser {
 		});
 	}
 
+	async Reminder (email: string, password: string, code: number) {
+		return axios.put<IRegister>('/reminder', {
+				email: email,
+				password: password,
+				code: code
+		});
+	}
+
 	async ChangeProfile(form: IUser) {
 		return axios.put<IUser>('/users', {
 			login: form.login,
@@ -68,7 +76,11 @@ class getUser {
 	}
 
 	async checkMail(email: string) {
-		return axios.post<IIsCreator>('/check-mail', {email: email});
+		return axios.post<string>('/check-mail', {email: email});
+	}
+
+	async checkReminder(email: string) {
+		return axios.post<string>('/reminder-password', {email: email});
 	}
 
 	async addReview(form: IReviews) {

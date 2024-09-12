@@ -39,6 +39,21 @@ export const useRegister = (form: IRegister) => {
 	return { mutate, isError, error }
 }
 
+export const useReminder = (password: string, email: string, code: number) => {
+	const { mutate, isError, error } = useMutation({
+		mutationKey: ['reminder'],
+		mutationFn: () => getUser.Reminder(password, email, code),
+		onSuccess() {
+			navigate('/login');
+		}
+		
+	});
+
+	const navigate = useNavigate();
+
+	return { mutate, isError, error }
+}
+
 export const useUserLogin = (form: IRegister) => {
 	const { mutate, isError } = useMutation({
 		mutationKey: ['userLogin'],
@@ -94,6 +109,13 @@ export const useCheckMail = (email: string) => {
 	});
 }
 
+export const useCheckReminder = (email: string) => {
+	return useMutation({
+		mutationKey: ['checkReminder'],
+		mutationFn: () => getUser.checkReminder(email),
+	});
+}
+
 export const useAddReview = (form: IReviews) => {
 	const { mutate, isError, isSuccess, error } = useMutation({
 		mutationKey: ['addReview'],
@@ -130,6 +152,7 @@ export const useLogOut = () => {
 		mutationFn: () => getUser.logOut(),
 		onSuccess() {
 			QueryClient.invalidateQueries({queryKey: ['userSession']});
+			navigate('/');
 			navigate(0);
 		}
 	});

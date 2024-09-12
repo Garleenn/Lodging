@@ -21,6 +21,7 @@ import { ChangeLodging } from './pages/ChangeLodging/ChangeLodging.tsx';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Errors } from './pages/Errrors/Errors.tsx';
+import { Reminder } from './pages/ReminderPassword/Reminder.tsx';
 
 const queryClient = new QueryClient()
 
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
   {
     path: "errors",
     element: <Errors />
+  },
+  {
+    path: "reminder",
+    element: <Reminder />
   },
 ]);
 

@@ -96,7 +96,7 @@ export function ChangeLodging() {
 							<input {...register('city', { value: data.city })}/>
 							<label className="mt-5">Адрес</label>
 						<input {...register('address', { value: data.address })}/>
-							<label className="mt-5">Цена</label>
+							<label className="mt-5">Цена в сутки</label>
 							<input type="number" {...register('price', { value: data.price })}/>
 							<label className="mt-5">Ваш номер телефона</label>
 							<input type="tel" {...register('phoneNumber', { value: data.phoneNumber })}/>

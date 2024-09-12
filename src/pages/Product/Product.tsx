@@ -189,7 +189,7 @@ export function Product() {
 							<Link to={'/user/' + data.authorId}>Создатель: {data.author}</Link>
 							<i>{data.isHotel ? 'Рейтинг' : 'Средняя оценка'}: {data.raiting} звёзд</i>
 							<i className='places-count'>Осталось: {data.places} места</i>
-							<span className='text-xl'>Цена: <b>{data.price} руб.</b></span>
+							<span className='text-xl'>Цена: <b>{data.price} рублей/сутки</b></span>
 							<div className="bttns flex gap-4">
 								<button role='button' className='w-100 btn mt-2 text-center border border-emerald-500' onClick={() => setIsAddress(true)}>Узнать адрес</button>
 								<button role='button' className='w-100 btn mt-2 text-center' onClick={() => setIsOpen(true)}>Узнать телефон</button>

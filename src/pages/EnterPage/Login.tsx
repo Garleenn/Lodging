@@ -50,6 +50,7 @@ export function Login() {
 				<button type='submit' className="btn mt-8">Войти!</button>
 				{err && (<h3 className="text-red-500 font-bold text-xl mt-5">{err}</h3>)}
 				<Link className='mt-8' to='/register'>Ещё нет аккаунта? Зарегестрируйтесь!</Link>
+				<Link className='mt-8' to='/reminder'>Забыли пароль?</Link>
 			</form>
 			<Footer />
 		</>

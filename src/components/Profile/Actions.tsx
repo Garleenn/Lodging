@@ -21,7 +21,7 @@ export function Actions(props: IProps) {
 						<li className='xl:text-xl text-base'><Link to='/changeProfile'>Изменить данные профиля</Link></li>
 						{props.role && (<li className='xl:text-xl text-base'><Link to='/createLodging'>Разместить ночлег</Link></li>)}		
 						<li className='xl:text-xl text-base'><Link to='/errors'>Сообщить об ошибке</Link></li>
-						<li className='xl:text-xl text-base'><Link to='/' onClick={() => mutate()}>Выйти из аккаунта</Link></li>
+						<li className='xl:text-xl text-base'><a href='#' onClick={() => mutate()}>Выйти из аккаунта</a></li>
 					</ul>
 				</div>
 			</div>

@@ -124,28 +124,29 @@ app.get('/products', async (req, res) => {
     const title = req.query.title;
     const limit = req.query.limit;
 
-    let sorting = {
-        createdAt: -1
-    }; 
+    let sorting = {}; 
 
-    if(filtre == 'price1' && filtre != 'null') {
+    if(filtre == 'price1') {
         sorting.price = 1;
     } 
-    if(filtre == 'price-1' && filtre != 'null') {
+    if(filtre == 'price-1') {
         sorting.price = -1;
     } 
-    if(filtre == 'raiting1' && filtre != 'null') {
+    if(filtre == 'raiting1') {
         sorting.raiting = 1;
     } 
-    if(filtre == 'raiting-1' && filtre != 'null') {
+    if(filtre == 'raiting-1') {
         sorting.raiting = -1;
     }
-    if(filtre == 'data1' && filtre != null) {
+    if(filtre == 'data1') {
         sorting.createdAt = 1; 
     } 
-    if(filtre == 'data-1' && filtre != null) {
+    if(filtre == 'data-1') {
         sorting.createdAt = -1;
-    } 
+    }
+    if(filtre != 'data1' && filtre != 'data-1') {
+        sorting.createdAt = -1;
+    }
 
     let search = {};
     if (isHotel && isHotel != 'null') {
@@ -609,6 +610,51 @@ app.post('/check-mail', async (req, res) => {
     }
 });
 
+app.post('/reminder-password', async (req, res) => {
+    const { email } = req.body;
+
+    const code = Math.floor(1000 + Math.random() * 9000);
+    
+    try {
+        await transporter.sendMail({
+            from: 'Garleenn@yandex.ru',
+            to: email,
+            subject: 'Проверочный код для восстановления пароля на всеночлеги.рф',
+            text: `Ваш код для восстановления: ${code}`,
+            html: `<h1>Доброе время суток,</h1> <b>спасибо что выбрали всеночлеги.рф!</b><p>Ваш код для восстановления пароля: ${code}</p> <div><u>Если Вы не отправляли данное письмо, проигнорируйте его</u></div>`,
+        });
+     
+        req.session.reminderCode = code;
+
+        res.sendStatus(201);
+    } catch(error) {
+        console.log(error);
+        res.sendStatus(400);
+    }
+});
+
+app.put('/reminder', async(req, res) => {
+    const { code, password, email } = req.body;
+
+    const user = await User.findOne({email: email});
+
+    const salt = bcrypt.genSaltSync(10);
+    const hashPassword = bcrypt.hashSync(password, salt);
+
+    if(req.session.reminderCode == code && user) {
+        user.password = hashPassword;
+    
+        try {
+            await user.save();
+            res.sendStatus(200);
+        } catch (error) {
+            res.sendStatus(401);
+        }
+    } else {
+        res.status(400).send(`Неверный код`);
+    }
+});
+
 app.delete('/users', async (req, res) => {
     const email = req.query.email;
     if(req.session.username == email) {
@@ -868,15 +914,19 @@ app.put('/cart-delete', async (req, res) => {
     const { id } = req.body;
     
     const user = await User.findOne({email: req.session.username});
-    
-    const indexCart = user.cart.findIndex((e) => e.idProduct == id);
 
-    user.cart.splice(indexCart, 1)
+    if(user && id) {
+        const indexCart = user.cart.findIndex((e) => e.idProduct == id);
     
-    try { 
-        await user.save();
-        res.sendStatus(201);
-    } catch {
+        user.cart.splice(indexCart, 1)
+        
+        try { 
+            await user.save();
+            res.sendStatus(201);
+        } catch {
+            res.sendStatus(400);
+        }
+    } else {
         res.sendStatus(400);
     }
 });

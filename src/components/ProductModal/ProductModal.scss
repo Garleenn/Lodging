@@ -82,6 +82,9 @@
 	}
 }
 
+.images-container:focus {
+	outline: none;
+}
 @media (max-width: 900px) {
 	.images-container {
 		// position: relative;
@@ -100,6 +103,6 @@
 	.modal-image {
 		width: 100%;
 		height: fit-content;
-		top: 30%;
+		top: calc(50% - 200px) !important;
 	}
 }

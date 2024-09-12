@@ -58,9 +58,13 @@
 		width: 100% !important;
 	}
 
-	.navigator-container a button {
-		width: 10px !important;
-		height: 10px !important;
+	.navigator-container {
+		flex-wrap: wrap;
+
+		a button {
+			width: 5px !important;
+			height: 5px !important;
+		}
 	}
 }
 

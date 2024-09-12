@@ -39,7 +39,7 @@ export function Cart() {
 										<span>Тип: {product.isHotel ? 'Отель' : 'Частный'}</span>
 										<span>Город: <u>{product.city}</u></span>
 										<i>Рейтинг: {product.raiting} звёзд</i>
-										<span className='text-xl'>Цена: <b>{product.price} руб.</b></span>
+										<span className='text-xl'>Цена: <b>{product.price} руб/сутки</b></span>
 										<Link role='button' className='w-100 btn mt-2 text-center' to={'/product/' + product.idProduct}>Подробнее</Link>
 										<div className="favourite" onClick={() => removeProduct(product.idProduct)}>
 											<GrFavorite size={32} className='w-fit' />

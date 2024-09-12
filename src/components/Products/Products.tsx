@@ -66,25 +66,26 @@ export function Products() {
 	useEffect(() => {
 		const navigate = () => {
 			if(data && data.length && data[0].allProductsCount) {
-				let countThis = 0;
 				let countWhile = 1;
 				let navigateNumbers: any[] = []
-				console.log(data[0].allProductsCount);
 				for(let i = 0; i < data[0].allProductsCount; i++) {
 					countWhile++;
-					if(countWhile % 50 === 0) {
-						if(countThis < 5) {
-							countThis++;
-							navigateNumbers.push(countThis);
-						} else {
-							if(navigateNumbers[5] != `...`) {
-								navigateNumbers[5] = `...`;
-								navigateNumbers[6] = count;
-								// setCount(6);
-							}
-						}
-						setТavigateNumbers(navigateNumbers);
-					}
+
+					if(countWhile <= 50) {
+						navigateNumbers = [];
+					} else if(countWhile <= 100) {
+						navigateNumbers = [1, 2];
+					} else if(countWhile <= 150) {
+						navigateNumbers = [1, 2, 3];
+					} else if(countWhile <= 200) {
+						navigateNumbers = [1, 2, 3, 4];
+					} else if(countWhile <= 250) {
+						navigateNumbers = [1, 2, 3, 4, 5];
+					} else if(countWhile > 250) {
+						navigateNumbers = [1, 2, 3, 4, 5, `...`, count];
+					} //так проще всего
+
+					setТavigateNumbers(navigateNumbers);
 				}
 			} else {
 				setТavigateNumbers([]);
@@ -114,7 +115,9 @@ export function Products() {
 			{data && <CenterPage setFilters={setFilters} />}
 			{!isLoading && data ? (
 				<>
-				<h3 className='text-2xl font-bold text-slate-500 flex justify-center'>Найдено {data[0].allProductsCount} вариантов</h3>
+				{data.length && data[0].allProductsCount && (
+					<h3 className='text-2xl font-bold text-slate-500 flex justify-center'>Найдено {data[0].allProductsCount} вариантов</h3>
+				)}
 				<div className="products-container flex items-center justify-center xl:gap-10 gap-5 flex-wrap">
 					{data.map((product: IProduct, index: number) => (
 						<div className="card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product._id}>
@@ -131,7 +134,7 @@ export function Products() {
 								) : (
 									<i>Рейтинг: {product.raiting} звёзд</i>
 								)}
-								<span className='text-xl'>Цена: <b>{product.price} руб.</b></span>
+								<span className='text-xl'>Цена: <b>{product.price} руб/сутки</b></span>
 								<Link role='button' className='w-100 btn mt-2 text-center btn-link-bottom' to={'product/' + product._id}>Подробнее</Link>
 								{isInCart && (
 									<GrFavorite onClick={() => addToCart(product._id, index)} size={32} className='w-fit favourite' color={!isInCart[index] ? '#000' : 'crimson'} />
