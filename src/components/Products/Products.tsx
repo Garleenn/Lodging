@@ -121,12 +121,12 @@ export function Products() {
 				<div className="products-container flex items-center justify-center xl:gap-10 gap-5 flex-wrap">
 					{data.map((product: IProduct, index: number) => (
 						<div className="card flex flex-col flex-wrap w-1/6 border border-black rounded-xl cursor-pointer" key={product._id}>
-							<div className="image-card select-none">
+							<div className="image-card select-none rounded-t-xl">
 								<img className='rounded-t-xl' src={product.images[0]} alt={product.title} />
 							</div>
 							<div className="info-container px-4 py-3 flex flex-col">
 								<h3 className='font-bold text-2xl'>{product.title.substring(0, 20)}{product.title.length >= 20 && '...'}</h3>
-								<p className='text-slate-500'>{product.description.substring(0, 30)}{product.description.length >= 30 && '...'}</p>
+								<p className='descr text-slate-500'>{product.description}</p>
 								<span>Тип: {product.isHotel ? 'Отель' : 'Частный'}</span>
 								<span>Город: <u>{product.city}</u></span>
 								{!product.isHotel ? (
@@ -137,7 +137,7 @@ export function Products() {
 								<span className='text-xl'>Цена: <b>{product.price} руб/сутки</b></span>
 								<Link role='button' className='w-100 btn mt-2 text-center btn-link-bottom' to={'product/' + product._id}>Подробнее</Link>
 								{isInCart && (
-									<GrFavorite onClick={() => addToCart(product._id, index)} size={32} className='w-fit favourite' color={!isInCart[index] ? '#000' : 'crimson'} />
+									<GrFavorite onClick={() => addToCart(product._id, index)} size={36} className='w-fit favourite' color={!isInCart[index] ? '#000' : 'crimson'} />
 								)}
 							</div>
 						</div>
@@ -150,7 +150,7 @@ export function Products() {
 				</div>
 			)}
 			{data && data.length == 0 && (
-					<h2 className='text-center text-2xl font-semibold text-slate-500'>Таких товаров пока нет(</h2>
+					<h2 className='text-center text-2xl font-semibold text-slate-500'>Таких мест пока нет(</h2>
 			)}
 			<div className="navigator-container flex gap-3 justify-center mt-10">
 				{navigateNumbers && navigateNumbers.map((number: number | string, index: number) => (

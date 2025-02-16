@@ -7,7 +7,7 @@ import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6';
 import { useDeleteProduct, useProduct } from '../../hooks/useProducts';
 import { useAddToCart, useRemoveFromCart } from '../../hooks/useCart';
 import { ModalProduct } from '../../components/ProductModal/ModalProduct';
-import { useSession } from '../../hooks/useUser';
+import { useCheckAdmin, useSession } from '../../hooks/useUser';
 import { IoMenu } from 'react-icons/io5';
 import { IoMdClose } from 'react-icons/io';
 import dayjs from 'dayjs';
@@ -98,6 +98,7 @@ export function Product() {
 		}
 
 		doCart();
+
 	}, [session.data, session.refetch]);
 
 	const [isChanged, setIsChanged] = useState(false);
@@ -106,7 +107,9 @@ export function Product() {
 
 	const [isAddress, setIsAddress] = useState(false);
 
-	const [isOpenImage, setIsOpenImage] = useState(false)
+	const [isOpenImage, setIsOpenImage] = useState(false);
+
+	const {data: isAdmin} = useCheckAdmin();
 
 
 	return (
@@ -152,21 +155,21 @@ export function Product() {
 								</div>
 							)}
 							<img className='select-none cursor-pointer' src={data.images[index]} alt={data.title} onClick={() => setIsOpenImage(true)} />
-							{data && session.data?._id == data.authorId && (
+							{data && (isAdmin?.isAdmin == true || session.data?._id == data.authorId) ? (
 								<div className="absolute xl:top-5 xl:left-5 top-4 left-4">
 									<span>
-										{!isOpenMenu && (<div onClick={() => setIsOpenMenu(true)} className="xl:p-4 p-2 cursor-pointer bg-slate-200 rounded-full z-10"><IoMenu className='' size={28} /></div>)}
+										{!isOpenMenu && (<div onClick={() => setIsOpenMenu(true)} className="xl:p-4 p-2 cursor-pointer bg-slate-200 rounded-full z-10"><IoMenu size={28} /></div>)}
 									</span>
 									{isOpenMenu && data && (
 										<ul className='bg-slate-100 z-10 p-6 rounded-2xl relative border-2 border-black'>
 											<li className='cursor-pointer absolute top-1 right-1'><IoMdClose size={20} onClick={() => setIsOpenMenu(false)}/></li>
-											<li onClick={() => setIsChanged(true)}><a href="#">Изменить количество мест</a></li>
+											{!isAdmin?.isAdmin && <li onClick={() => setIsChanged(true)}><a href="#">Изменить количество мест</a></li>}
 											<li><Link to={`/changeLodging/${id}`}>Изменить</Link></li>
 											<li onClick={removeLodging}><a href="#">Удалить</a></li>
 										</ul>
 									)}
 								</div>
-							)}
+							) : null}
 							{data && data.images.length > 1 && (
 								<div className="arrow-right arrow" onClick={sliderRight}>
 									<span>
@@ -188,7 +191,7 @@ export function Product() {
 							<span>Город: <u>{data.city}</u></span>
 							<Link to={'/user/' + data.authorId}>Создатель: {data.author}</Link>
 							<i>{data.isHotel ? 'Рейтинг' : 'Средняя оценка'}: {data.raiting} звёзд</i>
-							<i className='places-count'>Осталось: {data.places} места</i>
+							<i className='places-count'>Осталось: {data.places} мест</i>
 							<span className='text-xl'>Цена: <b>{data.price} рублей/сутки</b></span>
 							<div className="bttns flex gap-4">
 								<button role='button' className='w-100 btn mt-2 text-center border border-emerald-500' onClick={() => setIsAddress(true)}>Узнать адрес</button>

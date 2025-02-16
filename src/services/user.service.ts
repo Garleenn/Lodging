@@ -63,6 +63,10 @@ class getUser {
 		return axios.get<IUser>('/session');
 	}
 
+	async CheckAdmin() {
+		return axios.get<{isAdmin: boolean}>('/session/is-admin');
+	}
+
 	async logOut() {
 		return axios.post('/logout');
 	}

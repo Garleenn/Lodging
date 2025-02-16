@@ -681,6 +681,14 @@ app.get('/session', async (req, res) => {
     }
 });
 
+app.get('/session/is-admin', (req, res) => {
+    if(req.session.username == 'Garleenn@yandex.ru') {
+        res.send({isAdmin: true}).status(200);
+    } else {
+        res.send({isAdmin: false}).status(200);
+    }
+});
+
 app.get('/check', async (req, res) => {
     if(req.session.username) {
         const { id } = req.query;

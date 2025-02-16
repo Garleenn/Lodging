@@ -94,6 +94,14 @@ export const useSession = () => {
 	});
 }
 
+export const useCheckAdmin= () => {
+	return useQuery({
+		queryKey: ['checkAdmin'],
+		queryFn: () => getUser.CheckAdmin(),
+		select: (data) => data.data
+	});
+}
+
 export const useCheck = (id: string) => {
 	return useQuery({
 		queryKey: ['userCheck'],

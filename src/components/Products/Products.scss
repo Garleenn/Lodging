@@ -24,10 +24,15 @@
 	}
 	.favourite {
 		position: absolute;
-		right: 10px;
-		top: 10px;
+		right: 12px;
+		top: 12px;
 		border: none;
 		transition: all 200ms;
+
+		background-color: #fff;
+		border-radius: 100%;
+		padding: 6px;
+		opacity: 0.85;
 
 		&:hover {
 			color: crimson;
@@ -89,4 +94,11 @@
 	.products-container {
 		margin: 10px 10px;
 	}
+}
+
+.descr {
+	max-width: 260px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }

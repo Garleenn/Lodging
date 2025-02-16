@@ -48,7 +48,9 @@ button,.btn {
   cursor: pointer;
   transition: all 0.33s;
   user-select: none;
+  border-radius: 12px !important;
 }
+
 button:hover, .btn:hover {
   border-color: #646cff;
   background-color: #646cff;
@@ -56,7 +58,6 @@ button:hover, .btn:hover {
 }
 
 input, textarea, select, Select {
-  /* border-radius: 8px; */
   border: 1px solid #646cff;
   padding: 0.6em 1.2em;
   font-size: 1em;
@@ -64,12 +65,13 @@ input, textarea, select, Select {
   font-family: inherit;
   background-color: #fff;
   outline: none;
+  border-radius: 12px;
 }
 
 input:-webkit-autofill {
-  -webkit-box-shadow: inset 0 0 0 50px #fff !important; /* Цвет фона */
-  -webkit-text-fill-color: #000000 !important; /* цвет текста */
-  color: #000000 !important; /* цвет текста */
+  -webkit-box-shadow: inset 0 0 0 50px #fff !important;
+  -webkit-text-fill-color: #000000 !important;
+  color: #000000 !important;
 }
 
 label {
