@@ -38,6 +38,7 @@ class getProducts {
 			places: product.places,
 			images: product.images,
 			address: product.address,
+			coords: product.coords,
 		});
 	}
 

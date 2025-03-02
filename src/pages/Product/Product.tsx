@@ -130,7 +130,7 @@ export function Product() {
 		{isAddress && data && (
 			<>
 				<div className="background-dark fixed top-0 left-0 w-full h-full bg-black z-50 opacity-40"></div>
-				<ModalAddress address={data.address} setIsAddress={setIsAddress} />
+				<ModalAddress coords={data.coords} address={data.address} setIsAddress={setIsAddress} />
 			</>
 		)}
 		{isChanged && data && id && (

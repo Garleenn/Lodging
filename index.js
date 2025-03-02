@@ -89,6 +89,7 @@ const productSchema = new mongoose.Schema({
         // max: 5,
     },
 	images: [String],
+	coords: [Number],
 	phoneNumber: {
         type: String,
         required: true,
@@ -210,12 +211,12 @@ app.get('/myProducts', async (req, res) => {
 });
 
 app.post('/products', async (req, res) => {
-    const { title, description, price, isHotel, city, phoneNumber, places, images, address } = req.body;
+    const { title, description, price, isHotel, city, phoneNumber, places, images, address, coords } = req.body;
     const { login, _id, grade, raiting } = await User.findOne({email: req.session.username});
 
     let convertedImages = [];
 
-    if(images && images.length > 1) {
+    if(images && images.length > 0) {
         for(let i = 0; i < images.length; i++) {
             let avaImage = images[i];
             const base64String = avaImage.replace(/^data:.+;base64,/, '');
@@ -244,7 +245,7 @@ app.post('/products', async (req, res) => {
 
     if(_id) {
         const product = new Product({
-            title, description, price, isHotel, city, phoneNumber, places, address,
+            title, description, price, isHotel, city, phoneNumber, places, coords, address,
             images: convertedImages,
             author: login,
             authorId: _id,

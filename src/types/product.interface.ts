@@ -14,4 +14,5 @@ export interface IProduct {
 	createdAt: string,
 	address: string,
 	allProductsCount: number,
+	coords: number[]
 }
